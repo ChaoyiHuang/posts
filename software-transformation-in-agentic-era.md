@@ -34,7 +34,7 @@ Zhipu AutoGLM can simulate human to operate phone across multiple applicaions to
 
 The provided features still are contrained by the software fixed logic, and can only deal with pre-designed scenarios.
 
-## Pattern 2 - unlimited scenario, fixed logic
+## Pattern 2 - Agentic inside 1
 
 In pattern 2, the software interactive interfaces is changed to natrual language, or multi-modal methods (text, voice, vision etc), but the backend part keep the same.
 
@@ -44,7 +44,7 @@ But the features are still constrained by the backend which is tradional program
 
 The devops agent under AWS bedrock agent samples[8] is a good example for these pattern. The supervisor agent can act as intent recognition, and orchestrate github agent and grafana agent to handle the task. While granfana agent can use tool(lambda function) to call grafana, what task can be completed is relying on the API provided by grafana, so as to github agent. 
 
-## Pattern 3 - unlimited scenario, unlimited logic
+## Pattern 3 - Agentic inside 2
 
 The devops agent under AWS bedrock agent samples[8] is a good example for these pattern. The supervisor agent can act as intent recognition, and orchestrate github agent and grafana agent to handle the task. While granfana agent can use tool(lambda function) to call grafana, what task can be completed is relying on the API provided by grafana, so as to github agent. 
 
