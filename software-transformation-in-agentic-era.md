@@ -36,11 +36,27 @@ The provided features still are contrained by the software fixed logic, and can 
 
 ## Pattern 2 - unlimited scenario, fixed logic
 
-In this pattern, in fact, software doesn't change any. The agentic capability is added overlay via the agent for example OpenAI operator, or Google project mariner; both these two agents can handle tasks in web browser like navigation, fill form, etc.
+In pattern 2, the software interactive interfaces is changed to natrual language, or multi-modal methods (text, voice, vision etc), but the backend part keep the same.
 
-Zhipu AutoGLM can simulate human to operate phone across multiple applicaions to finish specific task.
+It's open for scenario what the end user want to do, the flexibility to handle various scenarios is what the value added by agentic AI systems, powered by LLM/VLM etc.
 
-The provided features still are contrained by the software fixed logic, and can only deal with pre-designed scenarios.
+But the features are still constrained by the backend which is tradional programmed software, what API is provided is what can be exposed.
+
+The devops agent under AWS bedrock agent samples[8] is a good example for these pattern. The supervisor agent can act as intent recognition, and orchestrate github agent and grafana agent to handle the task. While granfana agent can use tool(lambda function) to call grafana, what task can be completed is relying on the API provided by grafana, so as to github agent. 
+
+## Pattern 3 - unlimited scenario, unlimited logic
+
+The devops agent under AWS bedrock agent samples[8] is a good example for these pattern. The supervisor agent can act as intent recognition, and orchestrate github agent and grafana agent to handle the task. While granfana agent can use tool(lambda function) to call grafana, what task can be completed is relying on the API provided by grafana, so as to github agent. 
+
+## Pattern 4 - agentic native
+
+For pattern 4, the software is the agent.
+
+Most likely, it's purpose built agent, for example Tesla FSD, with continous online/offline training, with self evolution capabilities.
+
+It may require huge mounts of data to train specific model and serve as the agent. In most cases, it may not be a good deal in ROI.
+
+## References
 
 [1] [Practices for Governing Agentic AI Systems](https://cdn.openai.com/papers/practices-for-governing-agentic-ai-systems.pdf)
 
@@ -56,6 +72,6 @@ The provided features still are contrained by the software fixed logic, and can 
 
 [7] [AutoGLM: Autonomous Foundation Agents for GUIs](https://xiao9905.github.io/AutoGLM/)
 
-
+[8] [amazon-bedrock-agent-samples-devops-agent](https://github.com/awslabs/amazon-bedrock-agent-samples/tree/main/examples/multi_agent_collaboration/devops_agent)
 
 (please note that all statements in the article is author's personal view, does not relect any view of his affiliation and the affilation's commercial interest. all references are public available resources)
