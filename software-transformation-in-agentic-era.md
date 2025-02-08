@@ -78,6 +78,8 @@ It may require huge mounts of data to train specific model and serve as the agen
 
 [8] [amazon-bedrock-agent-samples-devops-agent](https://github.com/awslabs/amazon-bedrock-agent-samples/tree/main/examples/multi_agent_collaboration/devops_agent)
 
-[9] [smolagents Text to SQL example](https://huggingface.co/docs/smolagents/examples/text_to_sql)
+[9] [smolagents](https://github.com/huggingface/smolagents)
+
+[10] [smolagents Text to SQL example](https://huggingface.co/docs/smolagents/examples/text_to_sql)
 
 (please note that all statements in the article is author's personal view, does not reflect any view of his affiliation and the affilation's commercial interest. all references are public available resources)
