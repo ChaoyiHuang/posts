@@ -43,13 +43,19 @@ Zhipu AutoGLM can simulate human to operate phone across multiple applicaions to
 The provided features still are contrained by the software fixed logic, and can only deal with pre-designed scenarios.
 
 [1] [Practices for Governing Agentic AI Systems](https://cdn.openai.com/papers/practices-for-governing-agentic-ai-systems.pdf)
+
 [2] [Introducing Gemini 2.0: our new AI model for the agentic era](https://blog.google/technology/google-deepmind/google-gemini-ai-update-december-2024/#ceo-message)
+
 [3] [NVIDIA CEO Jensen Huang Keynote at CES 2025](https://www.youtube.com/watch?v=k82RwXqZHY8)
+
 [4] [The Anatomy of Agentic AI](https://dr-arsanjani.medium.com/the-anatomy-of-agentic-ai-0ae7d243d13c)
-[4] [OpenAI Operator](https://openai.com/index/introducing-operator/)
-[5] [Goole DeepMind Project Mariner](https://deepmind.google/technologies/project-mariner/)
-[6] [AutoGLM: Autonomous Foundation Agents for GUIs](https://xiao9905.github.io/AutoGLM/)
+
+[5] [OpenAI Operator](https://openai.com/index/introducing-operator/)
+
+[6] [Goole DeepMind Project Mariner](https://deepmind.google/technologies/project-mariner/)
+
+[7] [AutoGLM: Autonomous Foundation Agents for GUIs](https://xiao9905.github.io/AutoGLM/)
 
 
 
-[] https://xiao9905.github.io/AutoGLM/
+(please note that all statements in the article is author's personal view, does not relect any view of his affiliation and the affilation's commercial interest. all references are public available resources)
