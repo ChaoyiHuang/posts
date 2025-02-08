@@ -1,3 +1,3 @@
 # posts
 
-## 1. [software transformation in agentic era](software-trasformation-in-agentic-era.md)
+## 1. [software transformation in agentic era](software-transformation-in-agentic-era.md)
