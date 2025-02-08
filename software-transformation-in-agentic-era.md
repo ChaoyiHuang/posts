@@ -8,7 +8,7 @@ Dec 11, 2024, when Gemini 2.0 was released, "our new AI model for the agentic er
 
 Jan.6, 2025, "The age of Agentic AI is here", in Nvidia CEO Jensen Huang keynote at CES.
 
-The core of Agentic AI systems is the reasoning/planning/tools-use capability, which is introduced by LLM(including multi-modal large model).
+The core of Agentic AI systems is the reasoning/planning/tools-use capability etc, which is introduced by LLM(including multi-modal large model).
 
 the article "The Anatomy of Agentic AI" provides a comprehensive understanding of the technical point of view of Agentic AI systems.
 
