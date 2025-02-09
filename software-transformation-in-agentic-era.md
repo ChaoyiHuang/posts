@@ -42,7 +42,7 @@ It's open for scenario what the end user want to do, the flexibility to handle v
 
 But the features are still constrained by the backend which is traditional programmed software, what API is provided is what being exposed, nothing more.
 
-The devops agent under AWS bedrock agent samples[8] is a good example for these pattern. The supervisor agent can act as intent recognition, route and orchestrate github agent and grafana agent to handle the task. While granfana agent can use tool(lambda function) to call grafana, what task can be completed is relying on the API provided by grafana, so as to github agent. 
+The devops agent under AWS bedrock agent samples[8] is a good example for this pattern. The supervisor agent can act as intent recognition, route and orchestrate github agent and grafana agent to handle the task. While granfana agent can use tool(lambda function) to call grafana, what task can be completed is relying on the API provided by grafana, so as to github agent. 
 
 ## Pattern 3 - agentic inside, backend
 
@@ -54,11 +54,11 @@ Smolagents provides a very good example on this pattern. The code for two tables
 
 ## Pattern 4 - agentic native
 
-For pattern 4, the software is the agent.
+Currently there are lots of low code or no code agent build platform, to create such kind of general purpose domain agents.
 
-Most likely, it's purpose built agent, for example Tesla FSD, with continous online/offline training, with self evolution capabilities.
+On the other hand, it may be purpose built agent, for example Tesla FSD, with continous online/offline training, with self evolution capabilities. 
 
-It may require huge mounts of data to train specific model and serve as the agent. In most cases, it may not be a good deal in ROI.
+For vertical industry, It may require huge mounts of data to train specific model and serve as the agent, in most cases, it may not be a good deal in ROI.
 
 ## References
 
