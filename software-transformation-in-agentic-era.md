@@ -54,6 +54,8 @@ Smolagents provides a very good example on this pattern. The code for two tables
 
 ## Pattern 4 - agentic native
 
+For pattern 4, the software is the agent.
+
 Currently there are lots of low code or no code agent build platform, to create such kind of general purpose domain agents.
 
 On the other hand, it may be purpose built agent, for example Tesla FSD, with continous online/offline training, with self evolution capabilities. 
