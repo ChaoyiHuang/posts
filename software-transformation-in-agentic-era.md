@@ -2,7 +2,7 @@
 
 Agentic AI systems - AI systems that can pursue complex goals with limited direct supervision - is a new concept defined first in the paper "Practices for Governing Agentic AI Systems" by OpenAI, which was published on Dec.14, 2023.
 
-"Agentic", "Agentic AI", "Agentic AI systems" have rapdily become buzzwords, though AI agent is a concept appeared decades ago.
+"Agentic", "Agentic AI", "Agentic AI systems" have rapidly become buzzwords, though AI agent is a concept appeared decades ago.
 
 Dec 11, 2024, when Gemini 2.0 was released, "our new AI model for the agentic era" claimed by Google.
 
@@ -22,7 +22,7 @@ Pattern 0 does not include any agentic capability, it's traditional software, us
 
 The interactive method to these software systems usually involve keyboard, mouse and/or touch screen.
 
-No matter backend or front end, what the software can do is pre-determined by the source code, i.e, the programmed code rules limit the features. 
+No matter backend or front end, what the software can do is pre-determined by the source code, i.e, the programmed code rules limit the features.
 
 Characteristic: constrained scenrio, fix logic.
 
@@ -42,7 +42,9 @@ It's open for scenario what the end user want to do, the flexibility to handle v
 
 But the features are still constrained by the backend which is traditional programmed software, what API is provided is what being exposed, nothing more.
 
-The devops agent under AWS bedrock agent samples[8] is a good example for this pattern. The supervisor agent can act as intent recognition, route and orchestrate github agent and grafana agent to handle the task. While granfana agent can use tool(lambda function) to call grafana, what task can be completed is relying on the API provided by grafana, so as to github agent. 
+The devops agent under AWS bedrock agent samples[8] is a good example for this pattern. The supervisor agent can act as intent recognition, route and orchestrate github agent and grafana agent to handle the task. While github agent can use tool(lambda function) to call github, what task can be completed is relying on the API provided by github, so as to grafana agent.
+
+AtomicWork use cases provide aother example of this pattern. Users don't have to deal with complex GUI operations, IT services could be simply finished through natrual languages in Slack or Teams, leveraging the power of AI agents. 
 
 ## Pattern 3 - agentic inside, backend
 
@@ -56,11 +58,11 @@ Smolagents provides a very good example on this pattern. The code for two tables
 
 For pattern 4, the software is the agent.
 
-Currently there are lots of low code or no code agent build platform, to create such kind of general purpose domain agents.
+Currently there are lots of low code or no code agent build platform, to create such kind of general purpose domain agents, but most of these agents are not complex software systems.
 
 On the other hand, it may be purpose built agent, for example Tesla FSD, with continous online/offline training, with self evolution capabilities. 
 
-For vertical industry, It may require huge mounts of data to train specific model and serve as the agent, in most cases, it may not be a good deal in ROI.
+For vertical industry, It may require huge mounts of data to train specific model and serve as the agent, in most cases, it may not be a good deal in ROI. 
 
 ## References
 
@@ -80,8 +82,10 @@ For vertical industry, It may require huge mounts of data to train specific mode
 
 [8] [amazon-bedrock-agent-samples-devops-agent](https://github.com/awslabs/amazon-bedrock-agent-samples/tree/main/examples/multi_agent_collaboration/devops_agent)
 
-[9] [smolagents](https://github.com/huggingface/smolagents)
+[9] [AtomicWork IT services AI agents](https://www.atomicwork.com/blog/ai-agent-use-cases)
 
-[10] [smolagents Text to SQL example](https://huggingface.co/docs/smolagents/examples/text_to_sql)
+[10] [smolagents](https://github.com/huggingface/smolagents)
+
+[11] [smolagents Text to SQL example](https://huggingface.co/docs/smolagents/examples/text_to_sql)
 
 (please note that all statements in the article is author's personal view, does not reflect any view of his affiliation and the affilation's commercial interest. all references are public available resources)
