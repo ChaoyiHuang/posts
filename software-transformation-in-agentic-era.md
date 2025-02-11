@@ -1,6 +1,6 @@
-# Software Transformation in Agentic Era
+![image](https://github.com/user-attachments/assets/3e5d7810-2642-44c1-a1ce-a109f6ada935)# Software Transformation in Agentic Era
 
-Agentic AI systems - AI systems that can pursue complex goals with limited direct supervision - is a new concept defined first in the paper "Practices for Governing Agentic AI Systems" by OpenAI, which was published on Dec.14, 2023.
+Agentic AI systems - systems that adaptably pursue complex goals using reasoning and with limited direct supervision - is a new concept defined first in the paper "Practices for Governing Agentic AI Systems" by OpenAI, which was published on Dec.14, 2023.
 
 "Agentic", "Agentic AI", "Agentic AI systems" have rapidly become buzzwords, though AI agent is a concept appeared decades ago.
 
