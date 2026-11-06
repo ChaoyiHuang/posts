@@ -1,4 +1,15 @@
-![image](https://github.com/user-attachments/assets/3e5d7810-2642-44c1-a1ce-a109f6ada935)# Software Transformation in Agentic Era
+---
+title: Software Transformation in Agentic Era
+layout: default
+nav_order: 1
+parent: Blog
+description: How agentic AI is reshaping software — from traditional rule-based systems to agentic-native software, in five patterns.
+date: 2025-02-08
+---
+
+![Agentic era banner]({{ site.baseurl }}/blog/assets/images/agentic-era-banner.png)
+
+# Software Transformation in Agentic Era
 
 Agentic AI systems - systems that adaptably pursue complex goals using reasoning and with limited direct supervision - is a new concept defined first in the paper "Practices for Governing Agentic AI Systems" by OpenAI, which was published on Dec.14, 2023.
 
@@ -14,7 +25,7 @@ the article "The Anatomy of Agentic AI" provides a comprehensive understanding o
 
 Software is being reshaped in agentic era. There are several implementation patterns, as illustrated in the following picture.
 
-![](attachments/agentic-software.png?raw=true)
+![Implementation patterns of software transformation in the agentic era]({{ site.baseurl }}/blog/assets/images/agentic-software.png)
 
 ## Pattern 0 - rule based software
 
@@ -52,7 +63,7 @@ This pattern will remove the programmed code rule constraints in service logic. 
 
 The data schema is just to establish the boundary that the problem domain the agent should focus on.
 
-Smolagents provides a very good example on this pattern. The code for two tables could refer to attached [python script](attachments/text_to_sql.py), you have to replace your own huggingface token to run the script. Different service logic code will be dynamicly generated to address different user input, of course limited on the data schema defined domain.
+Smolagents provides a very good example on this pattern. The code for two tables could refer to attached [python script]({{ site.baseurl }}/blog/assets/files/text_to_sql.py), you have to replace your own huggingface token to run the script. Different service logic code will be dynamicly generated to address different user input, of course limited on the data schema defined domain.
 
 ## Pattern 4 - agentic native
 
@@ -88,4 +99,4 @@ For vertical industry, It may require huge mounts of data to train specific mode
 
 [11] [smolagents Text to SQL example](https://huggingface.co/docs/smolagents/examples/text_to_sql)
 
-(please note that all statements in the article is author's personal view, does not reflect any view of his affiliation and the affilation's commercial interest. all references are public available resources)
+*(please note that all statements in the article is author's personal view. all references are public available resources)*

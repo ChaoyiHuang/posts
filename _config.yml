@@ -1,0 +1,30 @@
+# Site settings
+title: Chaoyi Huang's Blog
+description: Notes on software engineering, AI agents, and technology.
+lang: en-US
+
+# Just the Docs theme (works with GitHub Pages branch builds via jekyll-remote-theme)
+remote_theme: just-the-docs/just-the-docs@v0.12.0
+
+# Site URL — project pages for the ChaoyiHuang/posts repository
+url: https://chaoyihuang.github.io
+baseurl: /posts
+
+# Header links (top-right)
+aux_links:
+  "GitHub": https://github.com/ChaoyiHuang/posts
+
+footer_content: 'Copyright &copy; ChaoyiHuang. Posts are licensed under the <a href="https://github.com/ChaoyiHuang/posts/blob/main/LICENSE">Apache License 2.0</a>.'
+
+# Theme features
+search_enabled: true
+heading_anchors: true
+color_scheme: light
+
+# Files that are not part of the site
+exclude:
+  - README.md
+  - LICENSE
+  - Gemfile
+  - Gemfile.lock
+  - vendor
