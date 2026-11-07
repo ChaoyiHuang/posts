@@ -1,4 +1,3 @@
-# posts
 
 ## Posts · [https://chaoyihuang.github.io/posts/](https://chaoyihuang.github.io/posts/)
 
