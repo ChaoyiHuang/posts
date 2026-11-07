@@ -2,7 +2,7 @@
 title: "Sandswap — ultra high efficient sandbox for AI agents"
 nav_order: 2
 parent: Blog
-description: "CNCF AI TCG talk slides — how Sandswap time-shares one strongly-isolated KVM microVM across AI agents at millisecond granularity (183 reuses/s per microVM, ~2.3 ms cold / ~0.96 ms warm), cutting agent execution-environment cost by 10–100×."
+description: "CNCF AI TCG talk slides — how Sandswap time-shares one strongly-isolated KVM microVM across AI agents at millisecond granularity (183 reuses/s per microVM, ~2.3 ms cold / ~0.96 ms warm), cutting agent execution-environment cost by 50–100×."
 date: 2026-11-07
 ---
 <!doctype html>
@@ -107,6 +107,16 @@ date: 2026-11-07
   .step .n{font-size:11px; color:var(--muted); font-weight:700}
   .step .t{font-size:14.5px; font-weight:660; line-height:1.15}
   .step .d{font-size:12px; color:var(--ink2); line-height:1.22; margin-top:2px}
+  /* rotation timeline */
+  .tl{display:flex; align-items:stretch; width:100%}
+  .tlb{border:2px solid var(--baseline); border-radius:8px; padding:7px 10px; text-align:center; flex:1; background:var(--surface)}
+  .tlb .st{font-size:14.5px; font-weight:700}
+  .tlb .sd{font-size:11.5px; color:var(--ink2); line-height:1.3; margin-top:1px}
+  .tlb.use{border-color:var(--accent); background:var(--wash)}
+  .tlb.use .st{color:var(--accent-deep)}
+  .tla{display:flex; flex-direction:column; justify-content:center; padding:0 9px; min-width:158px}
+  .tla .al{font-size:11.5px; color:var(--accent-deep); font-weight:600; text-align:center; line-height:1.25}
+  .tla .ac{font-size:20px; color:var(--baseline); text-align:center; line-height:1.1}
   /* nested rings (inside-out) */
   .ring{border:2.5px solid; border-radius:12px; padding:16px 16px 16px; position:relative}
   .ring>.rl{position:absolute; top:-12px; left:16px; background:var(--surface);
@@ -158,8 +168,7 @@ date: 2026-11-07
   <h1>Sandswap <span class="thin">— ultra high efficient sandbox for AI agents</span></h1>
   <div class="keymsg">
     Different AI agents share and reuse <b>the same strongly-isolated microVM at millisecond
-    granularity</b> — cutting agent execution-environment cost by <b>10–100×</b>.
-    Long considered impossible; Sandswap builds the full stack that makes it real.
+    granularity</b> — cutting agent execution-environment cost by <b>50–100×</b>.
   </div>
   <div class="kpis" style="margin-top:26px">
     <div class="kpi"><div class="lbl">Cold path — mount + exec</div>
@@ -177,9 +186,6 @@ date: 2026-11-07
   </div>
   <div class="strip" style="margin-top:22px">
     <span>github.com/ChaoyiHuang/sandswap</span>
-    <span>KVM microVM · virtio-fs · vsock</span>
-    <span>HTTP + MCP — one listener</span>
-    <span>single node → distributed fleet</span>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG</span><span class="r">1 / 16</span></div>
 </section>
@@ -188,7 +194,6 @@ date: 2026-11-07
 <section class="slide">
   <div class="kicker"><span class="no">01</span>The problem</div>
   <h2>Isolation is priced per second — agents need it for milliseconds</h2>
-  <div class="sub">One agent turn: the sandbox is only needed in the sliver.</div>
   <div class="content">
     <div>
       <div style="display:flex; height:52px; border-radius:6px; overflow:hidden; border:1px solid var(--hairline)">
@@ -197,14 +202,14 @@ date: 2026-11-07
       </div>
       <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:13.5px; color:var(--ink2)">
         <span>measured floor: minimal-token tool round trip P50 0.87–0.97 s (no real reasoning)</span>
-        <span style="color:var(--accent-deep); font-weight:650">◀ tool exec ≈ 2 ms — sandbox needed only here</span>
+        <span style="color:var(--accent-deep); font-weight:650">◀ tool exec ≈ 2 ms (e.g. read a 1 MB file) — sandbox needed only here</span>
       </div>
     </div>
     <ul class="b">
       <li>Agents run <b>generated, untrusted code</b> → need <b>hardware isolation</b></li>
       <li>One sandbox per agent → isolation sits <b>idle ~all the time</b></li>
-      <li>VM-per-request → <b>+50 ms</b> path latency · snapshot/restore complexity</li>
-      <li><b>Goal:</b> time-share one microVM · <b>ms swap</b> · <b>zero residue</b> — at scale</li>
+      <li>suspend/resume VM-per-request → <b>50+ ms</b> latency overhead · extra snapshot/restore complexity</li>
+      <li>Amortize via <b>session-level</b> suspend/resume → <b>deeper idling</b> · overcommit → <b>bursty load → CPU / memory contention</b></li>
     </ul>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">2 / 16</span></div>
@@ -219,7 +224,7 @@ date: 2026-11-07
     <div class="diag">
       <div class="db acc" style="width:820px">
         <div class="t">microVM — compute only</div>
-        <div class="d">minimized guest kernel + <b>warden, PID 1</b> · ~5 MB initramfs · <b>deliberately empty</b> — no rootfs</div>
+        <div class="d">kernel + <b>warden (PID 1)</b></div>
       </div>
       <div class="varr">
         <span class="ch">▲&nbsp;&nbsp;&nbsp;▼</span>
@@ -233,6 +238,27 @@ date: 2026-11-07
         </div>
         <div class="d">one directory per agent = its <b>SandFS</b>, the persistent rootfs</div>
         <div class="d">local disk · NFS · CephFS · Cloud FS — any shared filesystem</div>
+      </div>
+    </div>
+    <div class="tl">
+      <div class="tlb">
+        <div class="st">CLEAN</div>
+        <div class="sd">allowed_dirs = [ ]<br>no mount · no processes</div>
+      </div>
+      <div class="tla"><div class="al">① attach A<br>set-fs + guest mount</div><div class="ac">→</div></div>
+      <div class="tlb use">
+        <div class="st">IN USE</div>
+        <div class="sd">allowed_dirs = [sf-a51f3c]<br>A mounted · A executing</div>
+      </div>
+      <div class="tla"><div class="al">② swap out — async ≈3.1 ms<br>unmount + clearing chain</div><div class="ac">→</div></div>
+      <div class="tlb">
+        <div class="st">CLEAN</div>
+        <div class="sd">allowed_dirs = [ ]<br>no mount · no processes</div>
+      </div>
+      <div class="tla"><div class="al">③ attach B<br>set-fs + guest mount</div><div class="ac">→</div></div>
+      <div class="tlb use">
+        <div class="st">IN USE</div>
+        <div class="sd">allowed_dirs = [sf-b7e2d9]<br>B mounted · B executing</div>
       </div>
     </div>
     <ul class="b">
@@ -757,10 +783,10 @@ date: 2026-11-07
       <li style="margin-bottom:13px"><b>Swap the filesystem, not the machine</b> — 2.3 ms cold · 0.96 ms warm · 3.1 ms async out</li>
       <li style="margin-bottom:13px"><b>Zero residue</b> — proven at every layer, or the VM is destroyed</li>
       <li style="margin-bottom:13px"><b>No isolation traded for speed</b> — stronger than container defaults, VM-grade throughout</li>
-      <li style="margin-bottom:13px"><b>Think in seconds, swap in milliseconds</b> — 183 reuses/s · 64 agents/VM · <b>10–100× cost cut</b></li>
+      <li style="margin-bottom:13px"><b>Think in seconds, swap in milliseconds</b> — 183 reuses/s · 64 agents/VM · <b>50–100× cost cut</b></li>
     </ul>
     <div class="hrow" style="gap:12px; flex-wrap:wrap">
-      <div class="mini" style="border-color:var(--accent)"><b>hardware isolation at 1/10 – 1/100 the cost</b></div>
+      <div class="mini" style="border-color:var(--accent)"><b>hardware isolation at 1/50 – 1/100 the cost</b></div>
       <div class="mini">persistent workspace follows the agent</div>
       <div class="mini">HTTP + MCP · API key — zero code change</div>
       <div class="mini">bare metal · Kubernetes</div>
