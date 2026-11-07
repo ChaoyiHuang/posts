@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sandswap — ultra high efficient sandbox for AI agents</title>
+<style>
+  :root{
+    --page:#f9f9f7; --surface:#fcfcfb;
+    --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+    --hairline:#e1e0d9; --baseline:#c3c2b7; --code-bg:#f0efec;
+    --accent:#2a78d6; --accent-deep:#1c5cab;
+    --ord1:#86b6ef; --ord2:#5598e7; --ord3:#2a78d6; --ord4:#1c5cab;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--page); height:100vh; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--ink);
+  }
+  #deck{position:relative; width:1280px; height:720px; flex:none}
+  .slide{
+    position:absolute; inset:0; display:none; flex-direction:column;
+    background:var(--surface); border:1px solid rgba(11,11,11,.10);
+    padding:44px 58px 40px;
+  }
+  .slide.active{display:flex}
+  .kicker{font-size:12.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent-deep); font-weight:600; margin:0 0 6px}
+  .kicker .no{color:var(--muted); font-weight:500; margin-right:10px}
+  h2{font-size:31px; line-height:1.15; margin:0 0 4px; font-weight:650; letter-spacing:-.01em}
+  .sub{font-size:15.5px; color:var(--ink2); margin:2px 0 14px; line-height:1.4}
+  .content{flex:1; min-height:0; display:flex; flex-direction:column; gap:12px}
+  ul.b{list-style:none; margin:0; padding:0; font-size:16px; line-height:1.42; color:var(--ink)}
+  ul.b li{padding-left:20px; position:relative; margin-bottom:7.5px}
+  ul.b li::before{content:""; position:absolute; left:2px; top:.52em; width:7px; height:7px; background:var(--accent)}
+  ul.b li.sb::before{background:var(--muted)}
+  .dense ul.b{font-size:15px}
+  .dense ul.b li{margin-bottom:6px}
+  ul.b ul{list-style:none; margin:5px 0 0; padding:0; font-size:14.5px; color:var(--ink2)}
+  ul.b ul li{padding-left:16px; margin-bottom:3.5px}
+  ul.b ul li::before{content:"–"; position:absolute; left:0; top:0; width:auto; height:auto; background:none; color:var(--muted)}
+  b,strong{font-weight:650}
+  .m{color:var(--ink2)}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.86em;
+    background:var(--code-bg); padding:1px 5px; border-radius:3px}
+  pre[ascii]{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:12.2px; line-height:1.4; color:var(--ink);
+    margin:0; padding:10px 14px; border:1px solid var(--hairline);
+    background:var(--surface); overflow:hidden; white-space:pre;
+  }
+  .foot{display:flex; justify-content:space-between; align-items:baseline;
+    border-top:1px solid var(--hairline); padding-top:8px; margin-top:10px;
+    font-size:11.5px; color:var(--muted)}
+  .foot .r{font-variant-numeric:tabular-nums}
+  /* KPI tiles */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  .kpi{border:1px solid var(--hairline); padding:12px 14px 10px; background:var(--surface)}
+  .kpi .lbl{font-size:12.5px; color:var(--ink2); margin-bottom:4px}
+  .kpi .val{font-size:31px; font-weight:650; line-height:1.05; letter-spacing:-.01em}
+  .kpi .val small{font-size:17px; font-weight:600; color:var(--ink2)}
+  .kpi .note{font-size:11.5px; color:var(--muted); margin-top:4px; line-height:1.3}
+  /* tables */
+  table{border-collapse:collapse; width:100%; font-size:13.5px}
+  th{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+    font-weight:600; text-align:left; padding:5px 10px; border-bottom:1px solid var(--baseline)}
+  td{padding:5.5px 10px; border-bottom:1px solid var(--hairline); vertical-align:top; line-height:1.35}
+  td.num,th.num{text-align:right; font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:1px solid var(--baseline)}
+  /* two-column layout helper */
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:22px; min-height:0}
+  .cols .full-grid{display:flex; flex-direction:column; gap:10px; min-height:0}
+  .panel{border:1px solid var(--hairline); padding:12px 14px}
+  .panel h3{margin:0 0 8px; font-size:13px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink2); font-weight:650}
+  /* bars */
+  .bars{display:flex; flex-direction:column; gap:9px}
+  .brow{display:grid; grid-template-columns:215px 1fr; align-items:center; gap:10px}
+  .brow .bl{font-size:12.8px; color:var(--ink); text-align:right; line-height:1.2}
+  .btrack{position:relative; height:20px}
+  .bfill{position:absolute; left:0; top:0; height:20px; border-radius:0 4px 4px 0; min-width:3px}
+  .bval{position:absolute; font-size:12.3px; color:var(--ink); font-weight:600;
+    font-variant-numeric:tabular-nums; top:50%; transform:translateY(-50%); white-space:nowrap}
+  .axis{position:relative; height:16px; margin-left:225px}
+  .axis .tick{position:absolute; top:0; font-size:10.5px; color:var(--muted);
+    font-variant-numeric:tabular-nums; transform:translateX(-50%)}
+  .axis .ln{position:absolute; top:14px; height:1px; background:var(--baseline); left:0; right:0}
+  .grouplbl{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+    font-weight:600; margin:2px 0 -2px}
+  .legend{display:flex; gap:16px; font-size:12px; color:var(--ink2); flex-wrap:wrap}
+  .legend .sw{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px;
+    vertical-align:-1px}
+  /* title slide */
+  .title-slide{justify-content:center}
+  .title-slide h1{font-size:52px; line-height:1.08; margin:10px 0 14px; font-weight:700; letter-spacing:-.015em}
+  .title-slide h1 .thin{color:var(--accent-deep)}
+  .keymsg{font-size:19.5px; line-height:1.45; color:var(--ink); max-width:1020px}
+  .keymsg b{color:var(--accent-deep)}
+  .strip{display:flex; gap:10px; font-size:13.5px; color:var(--ink2); flex-wrap:wrap}
+  .strip span{border:1px solid var(--hairline); padding:4px 12px; background:var(--surface)}
+  /* hud */
+  .hud{position:fixed; right:18px; bottom:14px; display:flex; gap:8px; align-items:center;
+    font-size:13px; color:var(--muted); user-select:none; z-index:10}
+  .hud button{border:1px solid var(--hairline); background:var(--surface); color:var(--ink2);
+    width:30px; height:26px; border-radius:4px; cursor:pointer; font-size:14px; line-height:1}
+  .hud button:hover{border-color:var(--accent); color:var(--accent-deep)}
+  .hint{position:fixed; left:18px; bottom:14px; font-size:11.5px; color:var(--muted); z-index:10}
+  @media print{
+    body{display:block; height:auto; overflow:visible; background:#fff}
+    #deck{transform:none !important; width:auto; height:auto}
+    .slide{display:flex !important; position:relative; page-break-after:always; break-after:page}
+    .hud,.hint{display:none}
+  }
+  @page{size:1280px 720px; margin:0}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- ═══════════════ 1 · TITLE ═══════════════ -->
+<section class="slide title-slide active">
+  <div class="kicker">CNCF AI TCG · November 2026 · Chaoyi Huang</div>
+  <h1>Sandswap <span class="thin">— ultra high efficient sandbox for AI agents</span></h1>
+  <div class="keymsg">
+    Different AI agents share and reuse <b>the same strongly-isolated microVM at millisecond
+    granularity</b> — cutting the agent execution-environment cost by <b>10–100×</b>.
+    Long considered impossible; Sandswap builds the full stack that makes it real.
+  </div>
+  <div class="kpis" style="margin-top:26px">
+    <div class="kpi"><div class="lbl">Cold path (mount + exec)</div>
+      <div class="val">≈2.3<small> ms</small></div>
+      <div class="note">P95 gateway E2E, bare-metal KVM</div></div>
+    <div class="kpi"><div class="lbl">Warm path (still mounted)</div>
+      <div class="val">≈0.96<small> ms</small></div>
+      <div class="note">P95 gateway E2E, sticky-lease hit</div></div>
+    <div class="kpi"><div class="lbl">Async swap-out</div>
+      <div class="val">≈3.1<small> ms</small></div>
+      <div class="note">off the response path, zero residue</div></div>
+    <div class="kpi"><div class="lbl">Reuses per microVM</div>
+      <div class="val">183<small> /s</small></div>
+      <div class="note">ideal benchmark; agent A→B rotation ≈ 6 ms</div></div>
+  </div>
+  <div class="strip" style="margin-top:22px">
+    <span>github.com/ChaoyiHuang/sandswap</span>
+    <span>KVM microVM · virtio-fs · vsock</span>
+    <span>HTTP + MCP, same listener</span>
+    <span>single node → distributed (etcd + sandns)</span>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG</span><span class="r">1 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 2 · PROBLEM ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">01</span>The problem</div>
+  <h2>Agent execution needs VM-grade isolation — but agents barely execute</h2>
+  <div class="sub">The tension: strong isolation is expensive per second; an agent only needs it for milliseconds at a time.</div>
+  <div class="content dense">
+    <ul class="b">
+      <li>AI agents run <b>generated, untrusted code</b> as tools (shell, file ops, installs) — shared-kernel
+        containers are a weak boundary for this; you want a <b>hardware-isolated VM</b>.</li>
+      <li>But an agent's duty cycle is tiny: one turn = <b>LLM thinking</b> + a few
+        <b>milliseconds of execution</b>. The <i>measured floor</i> on this stack — a minimal-token
+        tool-call round trip, fast model, essentially no reasoning — is already P50 0.87–0.97 s;
+        real agent turns with substantial prompts, outputs, and thinking run
+        <b>seconds to tens of seconds</b>. Either way: ≥ 3 orders of magnitude above any sandbox
+        segment (≤ 2.5 ms).</li>
+      <li>With one sandbox per agent, the VM does useful work <b>&lt; 1% of its lifetime</b> —
+        you pay for isolation 100% of the time and use it almost never.</li>
+      <li>Booting a fresh VM per request doesn't fix idle cost, and adds 100 ms+ of path latency
+        plus snapshot/restore complexity.</li>
+      <li><b>The goal (and the two tough parts of this talk):</b>
+        <ul>
+          <li>many agents <b>time-share one strongly-isolated microVM</b>, with swap overhead so small it
+            vanishes next to think time — <i>and at scale</i>;</li>
+          <li>the swap itself must keep <b>VM-grade isolation</b>: zero residue between agents while
+            dynamically mounting / unmounting filesystems into a live VM.</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">2 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 3 · CORE IDEA ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">02</span>Core idea</div>
+  <h2>Swap the disk, not the machine — compute and storage decoupled</h2>
+  <div class="sub">Sandswap redefines the microVM: it is pure compute. The agent's "disk" is a directory that is mounted in and out.</div>
+  <div class="content">
+    <pre ascii="">
+┌──────────────────────── microVM = compute only ─────────────────────────┐
+│   minimized guest kernel + warden (PID 1), ~5 MB initramfs             │
+│   deliberately EMPTY — no rootfs, nothing agent-specific inside        │
+│                    ▲  one permanent virtio-fs device (never hot-plugged)
+└────────────────────┼────────────────────────────────────────────────────┘
+                     │  allowed_dirs = [ active agent's dir ]   swap ≈ 0.20 ms
+┌────────────────────┴────────────────────────────────────────────────────┐
+│  volumes/ = storage:  sf-a51f3c · sf-b7e2d9 · sf-cd08b4 · …             │
+│  one directory per agent = its SandFS: the persistent rootfs           │
+│  (local disk, or NFS / CephFS / Cloud FS — any shared filesystem)      │
+└─────────────────────────────────────────────────────────────────────────┘</pre>
+    <ul class="b">
+      <li><b>Attaching an agent</b> = repoint the virtio-fs <code>allowed_dirs</code> filter
+        (~0.20 ms) + a guest bind-mount swap. <b>No boot, no copy, no snapshot / pause / resume</b>
+        ever touches the request path.</li>
+      <li>While agent A thinks (seconds), the <b>same microVM serves B, C, …</b>; when A's next
+        call arrives, its SandFS is swapped back in. Everything an agent writes persists —
+        the disk follows the <b>agent</b>, not the machine.</li>
+      <li>A boot costs seconds; a swap costs a filter update + a bind mount.
+        That asymmetry is the entire economic argument.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">3 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 4 · ARCHITECTURE ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">03</span>Architecture</div>
+  <h2>Four components, three planes — built from scratch for the ms-scale swap</h2>
+  <div class="sub">Almost the entire stack is purpose-built: VMM fork, guest kernel, PID 1, node daemon, gateway, DNS.</div>
+  <div class="content dense">
+    <pre ascii="">
+ AI agents ──HTTP :3000 / MCP──▶ GATEWAY ──gRPC stream (sandlot dials out)──▶ SANDLOT (1 per node)
+ (api_key)                       auth · SandFS registry                      warm pool of CLEAN microVMs
+                                 ownership · sticky lease · placement               │
+                                 │  etcd + sandns (owner-aware DNS)         sandvmm — 1 VMM per microVM (KVM)
+                                 │  multi-gateway only                       microVM: kernel + warden (PID 1)
+                                 ▼                                                │
+                        gateway never touches storage           virtio-fs device + allowed_dirs filter
+                                                                          ▼
+                                            volumes/ + templates/ — one dir per SandFS
+                                            (plain directories; storage backend replaceable)</pre>
+    <ul class="b">
+      <li><b>Gateway</b> — entry point: authenticate, resolve <code>sandfs_id</code>, claim ownership,
+        pick a node, open the lease. Storage-free by design.</li>
+      <li><b>Sandlot</b> — per-node daemon: keeps the warm pool, swaps SandFS in/out, talks to each
+        warden over vsock. <b>No open ports</b> — one outbound stream (NAT-friendly).</li>
+      <li><b>sandvmm</b> — one trimmed Cloud-Hypervisor-fork process per microVM: KVM + the virtio-fs
+        device and its filter; controlled over a Unix socket (rare, ms, off the hot path).</li>
+      <li><b>Warden</b> — PID 1 inside every VM: mounts the SandFS, runs commands under
+        caps/seccomp/memory limits, tears everything down at release.</li>
+      <li><b>Planes:</b> control (human API + provisioning + etcd) · exec (agent traffic) · storage
+        (prov-only writers). Distributed scale-out measures <b>within noise of single-node</b> —
+        etcd sees zero writes per execution cycle in steady state.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">4 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 5 · SANDFS ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">04</span>SandFS</div>
+  <h2>SandFS — the agent's disk: one directory, two modes</h2>
+  <div class="sub">The microVM is the compute; the SandFS is the disk. Everything the agent keeps lives here and persists across swaps.</div>
+  <div class="content">
+    <table>
+      <tr><th></th><th>Flat — the build mode</th><th>Overlay — the serve mode</th></tr>
+      <tr><td><b>Content</b></td><td>full writable copy of a template — the whole directory is the rootfs</td>
+          <td>read-only shared base (template layers) + writable <code>/workspace</code>, <code>/home/agent</code>, fresh tmpfs <code>/tmp</code></td></tr>
+      <tr><td><b>Writes</b></td><td>anything: <code>/usr</code>, <code>/etc</code>, <code>pip</code>, <code>apt</code> — all persists</td>
+          <td>only workspace + home persist; rootfs read-only is <b>kernel-enforced</b> (host-side ro mount)</td></tr>
+      <tr><td><b>Creation</b></td><td>seeds the volume from a local or OCI template</td>
+          <td>instant — moves no template bytes; layers extracted once, shared by all instances</td></tr>
+      <tr><td><b>Privileges</b></td><td>Install profile: 10 ambient caps (apt/dpkg work)</td>
+          <td>Strict profile: zero capabilities</td></tr>
+    </table>
+    <ul class="b">
+      <li>Overlay uses <b>no upperdir / workdir</b> — the read-only overlay works on <b>any</b> shared
+        filesystem (NFS, CephFS, Cloud FS…); nothing stateful sits on the share.</li>
+      <li>Workflow: <b>build in flat → freeze with <code>save-as-template</code> (an OCI artifact) →
+        serve many overlay SandFS instances</b> from one immutable base.</li>
+      <li>Mode, exec profile, and capabilities are taken from the <b>server-side record</b> —
+        an agent cannot request its own privileges or flip modes.</li>
+      <li>API surface: HTTP <code>:3000</code> with <b>MCP on the same listener</b>; API-key auth via
+        config injection — <b>zero code changes</b> for the agent; every request names its <code>sandfs_id</code>.</li>
+    </ul>
+  </div>
+
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">5 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 6 · SWAP-IN ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">05</span>Mechanism · swap-in</div>
+  <h2>The cold path: filter swap + mount &amp; exec in ONE vsock round trip</h2>
+  <div class="sub">A cold request lands on an idle CLEAN VM from the warm pool — the request path contains no boot.</div>
+  <div class="content dense">
+    <pre ascii="">
+ agent          gateway                sandlot             sandvmm        warden (PID 1)
+   │ POST /execute │                      │                   │                │
+   ├──────────────▶│ auth · claim owner-  │                   │                │
+   │               │ ship · pick node     │                   │                │
+   │               │ · open sticky lease  │                   │                │
+   │               ├─────────────────────▶│  bind an idle CLEAN pool VM        │
+   │               │                      ├── vm.set-fs ─────▶│ allowed_dirs   │
+   │               │                      │                   │ = [B]  ~0.2ms │
+   │               │                      ├───── OP_MOUNT_AND_EXEC ──────────▶│ build mount
+   │               │                      │                   │                │ stack, chroot,
+   │               │                      │◀──────────── result + output ─────┤ fork + exec
+   │◀──────────────┤◀─────────────────────┤                   │                │
+   │  response     │                      │   pool refills asynchronously     │</pre>
+    <ul class="b">
+      <li><b>Mount + exec combined into a single vsock RTT</b> is the core latency trick — the warden
+        builds the guest mount stack and spawns the first command in one operation
+        (likewise <code>mount_and_async_exec</code> for background jobs).</li>
+      <li>Ordering invariants (both directions): the <b>filter must be active before the guest
+        mounts</b> (the bind target must exist), and any <b>stale mount must be gone before the
+        filter swaps</b> (A's files must be unnameable while B is attaching). Mounts never stack.</li>
+      <li>The egress identity binding is published <b>before</b> the mount — the first guest process
+        can never emit un-attributed traffic.</li>
+      <li><b>Warm path:</b> a follow-up call within the sticky window (default 100 ms; 1 ms in the
+        benchmarks) skips everything — one <code>OP_EXEC</code> on a pooled connection:
+        <b>warm ≈ 0.96 ms, cold ≈ 2.3 ms</b> (gateway E2E P95). Pool starvation fails fast
+        (<code>NO_AVAILABLE_SANDBOX</code>) while the pool refills in the background.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">6 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 7 · SWAP-OUT ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">06</span>Mechanism · swap-out</div>
+  <h2>The clearing chain: async, strictly ordered, fail-closed</h2>
+  <div class="sub">Idle past the lease window (1 ms in benchmarks) → the unmount runs entirely off the response path, ≈3.1 ms P95, 100% under 5 ms even with 16 MB dirty pages.</div>
+  <div class="content dense">
+    <div class="cols">
+      <div class="full-grid">
+        <div class="panel"><h3>Warden teardown — every step must precede the next</h3>
+          <table>
+            <tr><td class="num">1</td><td><b>mount gate</b> (write lock): drain in-flight execs / file ops</td></tr>
+            <tr><td class="num">2</td><td><b>cgroup.kill</b> — atomic SIGKILL of the whole agent process tree</td></tr>
+            <tr><td class="num">3</td><td><b>rule-A sweep</b> — SIGKILL every live process above PID 1 (catches <code>setsid</code> stragglers that escape the cgroup)</td></tr>
+            <tr><td class="num">4–5</td><td>unmount <b>child→parent</b>: workspace/home, masked proc, /dev, busybox, then <code>/mnt/rootfs</code> — setup↔teardown symmetry, <b>never <code>MNT_DETACH</code></b></td></tr>
+            <tr><td class="num">6</td><td><code>drop_caches=3</code> — evict clean pagecache + dentries + inodes</td></tr>
+            <tr><td class="num">7</td><td><b>kernel-object sweep</b>: SysV IPC, user keyring</td></tr>
+            <tr><td class="num">8</td><td><b>socket sweep</b>: destroy dead-state TCP (sock_diag), flush neighbor table</td></tr>
+            <tr><td class="num">9</td><td><b>final-state gate</b>: a zombie or D-state task above PID 1 fails the unmount</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="full-grid">
+        <ul class="b">
+          <li>Only then does the sandlot clear the filter (<code>allowed_dirs = []</code>) and revoke the
+            egress binding — filter clear <b>after</b> guest unmount, so teardown paths still resolve.</li>
+          <li><b>Fail-closed rule:</b> if teardown cannot be <i>proven</i> complete — <code>EBUSY</code>,
+            D-state process, unreachable warden — the VM is <b>destroyed and replaced, never reused</b>.
+            A VM in an unknown state is a security question mark; a boot is just cost, off the request path.</li>
+          <li>No lazy detach: <code>MNT_DETACH</code> would leave a D-state process coexisting with the
+            next agent — Sandswap fails loudly instead.</li>
+          <li>Recycling bounds reuse as hygiene (default <code>max_uses</code> 100k commands /
+            <code>max_mounts</code> 10k attaches + memory pressure): isolation never depends on the
+            VM being fresh, only on the swap being complete.</li>
+          <li>The result: the VM returns to the pool <b>CLEAN</b> in ~3 ms — while the agent it just
+            served is still thinking.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">7 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 8 · BOUNDARY 1 ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">07</span>Isolation · boundary 1 of 2</div>
+  <h2>VMM-side virtio-fs filter — what <i>exists</i> for the guest at all</h2>
+  <div class="sub">All tenants live under one host directory tree; the filter makes each agent's world contain exactly one directory.</div>
+  <div class="content dense">
+    <ul class="b">
+      <li><b>One rulebook:</b> <code>allowed_dirs</code> holds exactly <b>one</b> directory — the active
+        agent's. <b>Not on the list = does not exist:</b> a uniform <code>ENOENT</code>, so probing a
+        sibling is indistinguishable from probing a name that was never there. Even the share-root
+        listing is answered <i>from the allow-list itself</i>.</li>
+      <li>The active directory is presented under a <b>per-generation random alias</b> — real volume
+        names never appear inside the guest, not even in <code>/proc/self/mountinfo</code>.</li>
+      <li><b>Names are exactly one path component</b> — <code>..</code>, <code>.</code>, embedded
+        <code>/</code>, empty, non-UTF-8 all refused; the validated type is the only form in code
+        (a new opcode can't reintroduce the hole without failing to compile).</li>
+      <li><b>The host never follows a guest-chosen path:</b> lookups via
+        <code>openat2(RESOLVE_IN_ROOT | RESOLVE_NO_MAGICLINKS)</code> + <code>O_NOFOLLOW</code>, rooted
+        at parent descriptors; inodes held as descriptors; reopens limited to regular files/dirs —
+        planted symlinks and device nodes are inert.</li>
+      <li><b>Fail-closed everywhere:</b> omitted allow-list = empty list (no "filter off" mode
+        exists); share-root mutation gated <i>above</i> opcode dispatch, exhaustive over the enum;
+        no <code>vm.add-fs</code> route; multi-fs configs refused.</li>
+      <li><b>Cache revocation:</b> every <code>set-fs</code> clears the daemon's inode/handle tables
+        and bumps revocation epochs — a request that began before the swap answers
+        <code>ESTALE</code>; stale node ids die even in the A→B→A same-VM case.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">8 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 9 · BOUNDARY 2 ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">08</span>Isolation · boundary 2 of 2</div>
+  <h2>Guest-side mount stack + per-exec confinement — what an agent can <i>name</i></h2>
+  <div class="sub">The filter decides what exists; the warden decides what can be named. Even a chroot escape is still confined by the filter.</div>
+  <div class="content dense">
+    <div class="cols">
+      <div class="full-grid">
+        <ul class="b">
+          <li>Every exec: <b>chroot + chdir</b> into the bind-mounted SandFS — the process's namespace
+            root <i>is</i> the active volume.</li>
+          <li>Hardened tree: <code>nosuid,nodev</code> share · read-only RAM-backed busybox ·
+            masked <code>/proc</code> (kcore/kallsyms/keys/kmsg covered, proc remounted ro) ·
+            minimal <code>/dev</code>, fresh size-capped <code>/dev/shm</code> · fresh tmpfs
+            <code>/tmp</code> per attachment.</li>
+          <li>Per-exec sandbox: <code>setsid</code> · scrubbed env · <b><code>NO_NEW_PRIVS</code></b> ·
+            capability sets (strict: <b>empty</b>; install: 10) · <b>seccomp deny of 82 syscalls</b>
+            (mount API, <code>unshare/setns</code>, <code>ptrace/process_vm_*</code>, <code>bpf</code>,
+            keyring, mqueue, …) · <code>RLIMIT_AS</code> + per-agent <code>memory.max</code> = 70% VM RAM.</li>
+          <li>Warden self-defense: PID 1 (default signals inert, <code>kill -9 1</code> does nothing),
+            <code>PR_SET_DUMPABLE=0</code>, capability bounding set pre-dropped,
+            <code>CAP_SETPCAP</code> never granted — the profile cannot be widened.</li>
+        </ul>
+      </div>
+      <div class="full-grid">
+        <div class="panel"><h3>Per-exec profile vs common runtimes</h3>
+          <table>
+            <tr><th>Defense</th><th class="num">Sandswap strict</th><th class="num">Sandswap install</th><th class="num">Docker / Kata</th></tr>
+            <tr><td>NO_NEW_PRIVS</td><td class="num">yes</td><td class="num">yes</td><td class="num">no / no</td></tr>
+            <tr><td>mount · unshare · bpf · ptrace</td><td class="num">blocked</td><td class="num">blocked</td><td class="num">allowed</td></tr>
+            <tr><td>Seccomp deny list</td><td class="num">82 syscalls</td><td class="num">identical 82</td><td class="num">default profile</td></tr>
+            <tr><td>Capability bounding set</td><td class="num">empty</td><td class="num">10 caps</td><td class="num">14 caps</td></tr>
+            <tr><td>VMM-level allowed_dirs</td><td class="num">yes</td><td class="num">yes</td><td class="num">none / other</td></tr>
+          </table>
+        </div>
+        <ul class="b">
+          <li>Even the most privileged profile Sandswap runs (flat-mode installs) is <b>not weaker
+            than Docker/Kata on any line</b>, and strictly stronger on seccomp + NO_NEW_PRIVS —
+            the caps it withholds (NET_RAW, SETFCAP, SYS_CHROOT, SETPCAP, MKNOD) are exactly the
+            persistence/escape primitives a chrooted workload doesn't need.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">9 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 10 · ZERO RESIDUE ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">09</span>The guarantee behind the swap</div>
+  <h2>Zero residue: nothing of agent A survives into agent B</h2>
+  <div class="sub">The hard part is not the mount — it is proving the machine is empty. Every leak vector has a named close; each layer is independently necessary.</div>
+  <div class="content dense">
+    <div class="cols">
+      <div class="full-grid">
+        <table>
+          <tr><th>Leak vector</th><th>Closed by</th></tr>
+          <tr><td>live processes / <code>setsid</code> stragglers</td><td><code>cgroup.kill</code> + rule-A sweep</td></tr>
+          <tr><td>zombie / D-state task</td><td>final-state gate → <b>VM destroyed</b></td></tr>
+          <tr><td>tmpfs, /dev/shm, /tmp content</td><td>unmounted with contents; fresh for B</td></tr>
+          <tr><td>dirty pages</td><td><code>umount</code> flush + detach</td></tr>
+          <tr><td>clean pagecache / dentries / inodes</td><td><code>drop_caches=3</code></td></tr>
+          <tr><td>SysV IPC · user keyring · POSIX mqueue</td><td>unmount sweep + seccomp denial</td></tr>
+          <tr><td>dead-state TCP tuples (TIME_WAIT…)</td><td>sock_diag destroy</td></tr>
+          <tr><td>neighbor-table entries (ARP)</td><td>RTM_DELNEIGH flush</td></tr>
+          <tr><td>stale virtio-fs node ids / handles</td><td>set-fs revocation epoch → ESTALE</td></tr>
+          <tr><td>freed memory</td><td>no path resolves to A's state; new pages zero-filled</td></tr>
+        </table>
+      </div>
+      <div class="full-grid">
+        <ul class="b">
+          <li><b>Memory guarantee:</b> no live process, no open descriptor, no cached page, no kernel
+            object names A — that is the invariant; page scrubbing is unnecessary because no path
+            from B's world can reach A's state.</li>
+          <li><b>Documented residues</b> (by design): aggregate netns counters (traffic volume only);
+            machine-reuse linkability (boot_id, source IP) — the egress identity attributes flows,
+            it does not hide that one machine served both leases.</li>
+          <li>Underneath it all, the central invariant — <b>one SandFS per microVM at any instant</b> —
+            enforced at <b>four independent levels</b>: cluster (ownership + placement CAS) ·
+            node (sandlot binds 1:1) · VM (warden <code>MOUNT_GATE</code> + mounted-volume identity,
+            mismatch = refuse without executing) · guest (chroot).</li>
+          <li>Every behavior pinned by e2e suites: cross-tenant residue, hostile warden frames,
+            share-root escape matrix, seccomp profiles — not by inspection.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">10 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 11 · HOST SECURITY ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">10</span>Security engineering at scale</div>
+  <h2>Keeping the swap trustworthy when it spans host, VMM, and guest</h2>
+  <div class="sub">Ultra-low latency usually means trusting your peers; Sandswap gets ms without trusting anyone.</div>
+  <div class="content dense">
+    <ul class="b">
+      <li><b>Transport:</b> the sandlot↔warden channel runs on kernel <b>vhost-vsock</b> — the whole
+        data path lives in the kernel: <b>zero VMEXIT per packet</b>, no VMM context switch, no
+        network stack. (Userspace virtio and virtio-net+TCP both add measurable cost.)</li>
+      <li><b>The unauthenticated warden port is closed three times:</b> the guest kernel is built
+        without vsock loopback (<code>connect()</code> to own CID → <code>ENODEV</code>) ·
+        vhost-vsock never relays guest→guest · the warden accepts <b>host CID 2 only</b>.</li>
+      <li><b>vsockguard</b> — a BPF LSM on <code>socket_connect</code>: only the sandlot UID may dial
+        the warden port; AF_VSOCK connect() goes through no device node, so DAC alone cannot close it.</li>
+      <li><b>The protocol assumes a hostile peer:</b> <code>mount_point</code> pinned to exactly
+        <code>/mnt/rootfs</code> (no shadowing cgroupfs) · volume-identity cross-check under the mount
+        gate (mismatch → refuse <i>without executing</i>) · defensive frame parsing (a malformed frame
+        closes the connection, never PID 1).</li>
+      <li><b>Compartmentalized host identities:</b> sandvmm parses untrusted guest file requests, so it
+        runs as its own UID with <b>zero capabilities</b> — a full VMM compromise reaches no warden,
+        no storage write; the share root is traverse-only; volume names are
+        <b>HMAC-SHA256(seed, id) — 128-bit</b>, seed never reaches the VMM, rotation re-keys all names.</li>
+      <li><b>Tenant network:</b> one bridge, fail-closed nftables baseline — per-TAP anti-spoof ·
+        VM↔VM deny · guest→host default-deny; if the baseline can't install, the sandlot refuses to start.</li>
+      <li><b>Egress identity:</b> an unforgeable per-attachment binding — published before mount,
+        revoked at swap-out — so every flow is attributed to the right agent.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">11 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 12 · LATENCY ENGINEERING ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">11</span>Latency engineering</div>
+  <h2>Where the milliseconds go — and why nothing else is on the path</h2>
+  <div class="sub">Client round-trip decomposition, P50 in ms (bare metal, single-node HTTP; cold = cross-agent mount_and_exec, warm = sticky-lease hit).</div>
+  <div class="content">
+    <div class="cols" style="grid-template-columns:1.15fr 1fr">
+      <div class="full-grid">
+        <div class="grouplbl">Cold path — 2.0 ms total</div>
+        <div class="bars">
+          <div class="brow"><div class="bl">HTTP client → gateway</div><div class="btrack"><div class="bfill" style="width:5.5%;background:var(--ord1)"></div><span class="bval" style="left:calc(5.5% + 6px)">0.11</span></div></div>
+          <div class="brow"><div class="bl">gateway → sandlot (auth·lease·gRPC)</div><div class="btrack"><div class="bfill" style="width:5.5%;background:var(--ord2)"></div><span class="bval" style="left:calc(5.5% + 6px)">0.11</span></div></div>
+          <div class="brow"><div class="bl">sandlot: set-fs + vsock</div><div class="btrack"><div class="bfill" style="width:9.5%;background:var(--ord3)"></div><span class="bval" style="left:calc(9.5% + 6px)">0.19</span></div></div>
+          <div class="brow"><div class="bl">warden: virtio-fs mount + fork/exec</div><div class="btrack"><div class="bfill" style="width:80%;background:var(--ord4)"></div><span class="bval" style="left:calc(80% + 6px)">1.60</span></div></div>
+        </div>
+        <div class="grouplbl" style="margin-top:6px">Warm path — 0.92 ms total</div>
+        <div class="bars">
+          <div class="brow"><div class="bl">HTTP client → gateway</div><div class="btrack"><div class="bfill" style="width:4.5%;background:var(--ord1)"></div><span class="bval" style="left:calc(4.5% + 6px)">0.09</span></div></div>
+          <div class="brow"><div class="bl">gateway → sandlot</div><div class="btrack"><div class="bfill" style="width:5%;background:var(--ord2)"></div><span class="bval" style="left:calc(5% + 6px)">0.10</span></div></div>
+          <div class="brow"><div class="bl">sandlot: vsock (no set-fs)</div><div class="btrack"><div class="bfill" style="width:4.5%;background:var(--ord3)"></div><span class="bval" style="left:calc(4.5% + 6px)">0.09</span></div></div>
+          <div class="brow"><div class="bl">warden: fork/exec only</div><div class="btrack"><div class="bfill" style="width:32%;background:var(--ord4)"></div><span class="bval" style="left:calc(32% + 6px)">0.64</span></div></div>
+        </div>
+        <div class="axis"><span class="tick" style="left:0%">0</span><span class="tick" style="left:25%">0.5</span><span class="tick" style="left:50%">1.0</span><span class="tick" style="left:75%">1.5</span><span class="tick" style="left:100%">2.0 ms</span><span class="ln"></span></div>
+      </div>
+      <div class="full-grid">
+        <ul class="b">
+          <li><b>Nothing per-request except the work:</b> no boot (warm pool), no storage operation,
+            <b>no etcd I/O</b> — auth resolves from a local snapshot; etcd records ownership only on
+            transitions. Distributed ≈ single-node within noise.</li>
+          <li><b>No hot-path locks:</b> the sandlot's per-VM mount lock guards bookkeeping only, never
+            held across the RPC; in-flight execs run under the warden's read-side mount gate.</li>
+          <li>Hot path = <b>1 gRPC send → 1 set-fs (≈0.2 ms) → 1 vsock RTT</b>. The warden's
+            mount+exec dominates — i.e. the guest's own fork/execve, not the platform.</li>
+          <li>Swap-out (≈3.1 ms) is async and never on the response path;
+            a full <b>A→B rotation on one VM ≈ 6 ms</b> (measured service cycle).</li>
+          <li>For scale: every value above comes from ns-precision metrics embedded in every
+            response — the platform measures itself on every call.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">12 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 13 · CAPACITY ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">12</span>Measured capacity</div>
+  <h2>Up to 183 reuses/s per microVM — 64 agents continuously served by one VM</h2>
+  <div class="sub">Bare-metal KVM, Xeon Platinum 8255C (96 threads), pinned cores/NUMA; 1 vCPU / 256 MiB VMs; capacity defined by latency tiers, not throughput alone.</div>
+  <div class="content">
+    <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi"><div class="lbl">Ideal reuse rate</div><div class="val">183.95<small> cold/s</small></div><div class="note">per microVM · 5,886/s per host (32 VMs) · zero failures</div></div>
+      <div class="kpi"><div class="lbl">Traffic-shaped</div><div class="val">53.06<small> cold/s</small></div><div class="note">per VM · 2,048 agents queued · 2.0× latency tier held</div></div>
+      <div class="kpi"><div class="lbl">Agent density</div><div class="val">64<small> agents/VM</small></div><div class="note">at the conservative 0.9–1.5 s think-gap floor · density scales with think time</div></div>
+      <div class="kpi"><div class="lbl">Realistic, no failures</div><div class="val">62.5<small> agents/VM</small></div><div class="note">2,000 mixed agents on 32 VMs, retries on 503</div></div>
+    </div>
+    <table>
+      <tr><th>Scenario (physical-core mapping)</th><th class="num">Per microVM</th><th class="num">Per host (32 VMs)</th><th>Gate</th></tr>
+      <tr><td>Ideal paced lanes — pure cold</td><td class="num">183.95 cold/s</td><td class="num">5,886 cold/s</td><td>zero failures, 5 ms knee period</td></tr>
+      <tr><td>Ideal paced lanes — mixed (1–3 req/turn)</td><td class="num">155.96 cold + 132.25 warm/s</td><td class="num">4,991 + 4,232 /s</td><td>zero failures, 6 ms knee</td></tr>
+      <tr><td>Traffic-shaped (agents think 0.9–1.5 s)</td><td class="num">53.06 cold/s</td><td class="num">1,698 cold/s</td><td>P95 within 2.0× no-load baseline</td></tr>
+    </table>
+    <ul class="b">
+      <li><b>The cost math:</b> 64 agents per microVM (measured, latency-bounded) ⇒ ~64× fewer VMs
+        for the same agent population — and that is at the <b>minimal-token think floor</b>
+        (0.9–1.5 s): density scales with think time, and real reasoning agents think for
+        seconds-to-tens-of-seconds. The ideal ceiling (183/s) supports <b>~100× and beyond</b> —
+        hence <b>tens to ~100× execution-environment cost reduction</b>.</li>
+      <li>SMT mapping (2 VMs/core) halves per-VM rate and adds no host capacity — physical-core
+        mapping is the deployment recommendation. Raw logs and reproduction scripts are published.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">13 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 14 · WHAT IT MEANS ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">13</span>Value &amp; outlook</div>
+  <h2>VM security at container economics — what this unlocks</h2>
+  <div class="sub">Agents think in seconds; microVM reuse takes milliseconds. Every second of thinking is a second the VM serves someone else.</div>
+  <div class="content">
+    <ul class="b">
+      <li><b>For agent platforms:</b> every agent gets a hardware-isolated sandbox <i>and</i> a
+        persistent workspace at container-like density — no more choosing between isolation and cost.</li>
+      <li><b>Persistence without servers:</b> the SandFS follows the agent — <code>pip</code>,
+        <code>npm</code>, <code>apt</code>, files, caches all survive swaps, VM recycling, and node
+        migration; the agent never re-installs its world.</li>
+      <li><b>"Too fast" is a feature:</b> the VM is typically swapped out between two reasoning steps.
+        An agent that wants its next calls warm simply holds the VM with a background exec
+        (<code>sleep</code>) — background jobs survive across calls, bounded by an absolute run-time cap.</li>
+      <li><b>Integration is boring by design:</b> HTTP + MCP on one listener, API key from config,
+        OCI-based templates, Prometheus metrics; bare metal today, Kubernetes via an unprivileged
+        sandlot + privileged <code>boxout</code> sidecar (hot path needs zero privileges).</li>
+      <li><b>Beyond agents:</b> the same time-sharing primitive extends to code interpreters, CI
+        runners, and serverless sandboxes — anywhere strong isolation meets bursty, tiny workloads.</li>
+      <li><b>Open direction:</b> shaping admission at the gateway to approach the ideal reuse
+        capability under Poisson-distributed agent arrivals (documented as the next step).</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">14 / 15</span></div>
+</section>
+
+<!-- ═══════════════ 15 · TAKEAWAYS ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">14</span>Takeaways</div>
+  <h2>Sandswap in five sentences</h2>
+  <div class="content" style="gap:16px; justify-content:center">
+    <ul class="b" style="font-size:17.5px">
+      <li style="margin-bottom:12px"><b>Decouple compute from storage.</b> The microVM is just a kernel + warden (PID 1);
+        the agent's SandFS — a plain directory that <i>is</i> its rootfs — is mounted in and out.</li>
+      <li style="margin-bottom:12px"><b>Swap the filesystem, not the machine.</b> A ~0.2 ms filter swap + mount &amp; exec in
+        one vsock RTT ⇒ <b>2.3 ms cold / 0.96 ms warm</b>; swap-out (~3.1 ms) runs async off the response path.</li>
+      <li style="margin-bottom:12px"><b>Zero residue between agents</b> — enforced at every layer, proven or the VM is
+        destroyed: processes, caches, kernel objects, sockets, stale handles, memory paths.</li>
+      <li style="margin-bottom:12px"><b>No isolation traded for speed:</b> stronger per-exec confinement than container
+        defaults (NO_NEW_PRIVS, 82-syscall deny, VMM filter), VM-grade boundary throughout.</li>
+      <li style="margin-bottom:12px"><b>The economics:</b> thinking in seconds vs swapping in milliseconds ⇒
+        <b>183 reuses/s per microVM, 64 agents per VM (measured), 10–100× lower environment cost</b>.</li>
+    </ul>
+    <div class="strip">
+      <span><b>Try it:</b> github.com/ChaoyiHuang/sandswap</span>
+      <span>Full docs: concepts → architecture → isolation &amp; swap → benchmarks</span>
+      <span>Every benchmark reproducible from published scripts + raw logs</span>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">15 / 15</span></div>
+</section>
+
+</div>
+
+<div class="hint">← → navigate · F fullscreen · P print</div>
+<div class="hud">
+  <button id="prev" title="Previous (←)">‹</button>
+  <span id="ctr" style="font-variant-numeric:tabular-nums">1 / 15</span>
+  <button id="next" title="Next (→)">›</button>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var deck=document.getElementById('deck'), ctr=document.getElementById('ctr');
+  var cur=0;
+  function show(i){
+    cur=Math.max(0,Math.min(slides.length-1,i));
+    slides.forEach(function(s,j){s.classList.toggle('active',j===cur);});
+    ctr.textContent=(cur+1)+' / '+slides.length;
+    if(history.replaceState) history.replaceState(null,'','#'+(cur+1));
+  }
+  function fit(){
+    var s=Math.min(window.innerWidth/1320,window.innerHeight/760);
+    deck.style.transform='scale('+s+')';
+  }
+  window.addEventListener('resize',fit); fit();
+  document.getElementById('prev').onclick=function(){show(cur-1);};
+  document.getElementById('next').onclick=function(){show(cur+1);};
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(cur+1);}
+    else if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();show(cur-1);}
+    else if(e.key==='Home'){show(0);}
+    else if(e.key==='End'){show(slides.length-1);}
+    else if(e.key==='f'||e.key==='F'){
+      if(document.fullscreenElement){document.exitFullscreen();}
+      else{document.documentElement.requestFullscreen();}
+    }
+  });
+  var h=parseInt((location.hash||'').replace('#',''),10);
+  show(isNaN(h)?0:h-1);
+})();
+</script>
+</body>
+</html>
