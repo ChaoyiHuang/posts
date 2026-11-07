@@ -36,9 +36,9 @@ date: 2026-11-07
   .kicker{font-size:13px; letter-spacing:.14em; text-transform:uppercase;
     color:var(--accent-deep); font-weight:600; margin:0 0 6px}
   .kicker .no{color:var(--muted); font-weight:500; margin-right:10px}
-  h2{font-size:33px; line-height:1.12; margin:0 0 5px; font-weight:680; letter-spacing:-.012em}
+  h2{font-size:33px; line-height:1.12; margin:0 0 8px; font-weight:680; letter-spacing:-.012em}
   .sub{font-size:16.5px; color:var(--ink2); margin:2px 0 14px; line-height:1.35}
-  .content{flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; justify-content:center}
+  .content{flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; justify-content:center; padding-top:16px}
   /* bullets — short, speakable */
   ul.b{list-style:none; margin:0; padding:0; font-size:18.5px; line-height:1.38}
   ul.b li{padding-left:22px; position:relative; margin-bottom:8px}
@@ -126,6 +126,7 @@ date: 2026-11-07
     justify-content:center; text-align:center; font-size:13px; color:var(--muted); padding:8px 6px; line-height:1.3}
   .volb.act{border:2px solid var(--accent); background:var(--wash); color:var(--ink)}
   .conn{text-align:center; font-size:12px; color:var(--accent-deep); font-weight:600; padding:2px 0}
+  .shnote{font-size:11.5px; color:var(--muted); text-align:center; margin-top:8px; line-height:1.3}
   /* nested rings (inside-out) */
   .ring{border:2.5px solid; border-radius:12px; padding:16px 16px 16px; position:relative}
   .ring>.rl{position:absolute; top:-12px; left:16px; background:var(--surface);
@@ -145,8 +146,9 @@ date: 2026-11-07
   .grouplbl{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
     font-weight:650; margin:2px 0 -2px}
   /* title slide */
-  .title-slide{justify-content:center}
-  .title-slide h1{font-size:53px; line-height:1.07; margin:10px 0 14px; font-weight:720; letter-spacing:-.016em}
+  .title-slide{justify-content:flex-start}
+  .title-slide .tbody{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+  .title-slide h1{font-size:53px; line-height:1.07; margin:10px 0 8px; font-weight:720; letter-spacing:-.016em}
   .title-slide h1 .thin{color:var(--accent-deep)}
   .keymsg{font-size:20px; line-height:1.42; color:var(--ink); max-width:1040px}
   .keymsg b{color:var(--accent-deep)}
@@ -175,26 +177,28 @@ date: 2026-11-07
 <section class="slide title-slide active">
   <div class="kicker">CNCF AI TCG · November 2026 · Chaoyi Huang</div>
   <h1>Sandswap <span class="thin">— ultra high efficient sandbox for AI agents</span></h1>
-  <div class="keymsg">
-    Different AI agents share and reuse <b>the same strongly-isolated microVM at millisecond
-    granularity</b> — cutting agent execution-environment cost by <b>50–100×</b>.
-  </div>
-  <div class="kpis" style="margin-top:26px">
-    <div class="kpi"><div class="lbl">Cold path — mount + exec</div>
-      <div class="val">≈2.3<small> ms</small></div>
-      <div class="note">P95 gateway E2E · bare-metal KVM</div></div>
-    <div class="kpi"><div class="lbl">Warm path — still mounted</div>
-      <div class="val">≈0.96<small> ms</small></div>
-      <div class="note">P95 gateway E2E · sticky-lease hit</div></div>
-    <div class="kpi"><div class="lbl">Async swap-out</div>
-      <div class="val">≈3.1<small> ms</small></div>
-      <div class="note">off the response path · zero residue</div></div>
-    <div class="kpi"><div class="lbl">Reuses per microVM</div>
-      <div class="val">183<small> /s</small></div>
-      <div class="note">ideal benchmark · A→B rotation ≈ 6 ms</div></div>
-  </div>
-  <div class="strip" style="margin-top:22px">
-    <span>github.com/ChaoyiHuang/sandswap</span>
+  <div class="tbody">
+    <div class="keymsg">
+      Different AI agents share and reuse <b>the same strongly-isolated microVM at millisecond
+      granularity</b> — cutting agent execution-environment cost by <b>50–100×</b>.
+    </div>
+    <div class="kpis" style="margin-top:26px">
+      <div class="kpi"><div class="lbl">Cold path — mount + exec</div>
+        <div class="val">≈2.3<small> ms</small></div>
+        <div class="note">P95 gateway E2E · bare-metal KVM</div></div>
+      <div class="kpi"><div class="lbl">Warm path — still mounted</div>
+        <div class="val">≈0.96<small> ms</small></div>
+        <div class="note">P95 gateway E2E · sticky-lease hit</div></div>
+      <div class="kpi"><div class="lbl">Async swap-out</div>
+        <div class="val">≈3.1<small> ms</small></div>
+        <div class="note">off the response path · zero residue</div></div>
+      <div class="kpi"><div class="lbl">Reuses per microVM</div>
+        <div class="val">183<small> /s</small></div>
+        <div class="note">ideal benchmark · A→B rotation ≈ 6 ms</div></div>
+    </div>
+    <div class="strip" style="margin-top:22px">
+      <span>github.com/ChaoyiHuang/sandswap</span>
+    </div>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG</span><span class="r">1 / 16</span></div>
 </section>
@@ -265,11 +269,11 @@ date: 2026-11-07
       <div></div>
       <div class="volb act"><div><b>sf-b7e2d9</b><br><span style="font-size:12px; font-weight:500">agent B's SandFS — active</span></div></div>
     </div>
-    <div class="hrow" style="gap:12px">
-      <div class="mini">top row — <b>one microVM over time</b> (compute)</div>
-      <div class="mini">bottom row — <b>volumes/</b> (storage)</div>
+    <div class="hrow" style="gap:12px; margin-top:42px">
+      <div class="mini">top row — one microVM over time (compute)</div>
+      <div class="mini">bottom row — volumes/ (storage)</div>
       <div class="mini">dashed = nothing mounted</div>
-      <div class="mini" style="border-color:var(--accent)"><b>microVM = compute · SandFS = disk</b></div>
+      <div class="mini" style="border-color:var(--accent)">microVM = compute · SandFS = disk</div>
     </div>
     <ul class="b">
       <li><b>Swap in</b> = filter swap (~0.2 ms) + bind-mount — <b>no boot, no copy, no snapshot</b></li>
@@ -285,6 +289,25 @@ date: 2026-11-07
   <h2>Architecture — built from scratch</h2>
   <div class="content">
     <div style="display:flex; gap:22px; align-items:center">
+      <div style="flex:1; display:flex; flex-direction:column; gap:12px">
+        <div class="planecard">
+          <div class="pt">control plane</div>
+          <div class="pd">human gateway · prov sandlot · etcd — identities, templates, ownership</div>
+        </div>
+        <div class="planecard">
+          <div class="pt">exec plane</div>
+          <div class="pd">gateway → sandlot → sandvmm → microVM (warden) — every agent command</div>
+        </div>
+        <div class="planecard">
+          <div class="pt">storage plane</div>
+          <div class="pd">volumes + templates trees — prov writes · nodes access via virtio-fs</div>
+        </div>
+        <div class="planecard" style="border-left-color:var(--ink2)">
+          <div class="pt">roles — concepts.md</div>
+          <div class="pd"><b>gateway</b> &amp; <b>sandlot</b>: split by role — <b>exec / human</b> gateway · <b>exec / prov</b> sandlot — or one merged instance</div>
+          <div class="pd"><b>sandvmm</b> = VMM — fork + trim + dedicated extensions · <b>warden</b> = PID 1</div>
+        </div>
+      </div>
       <div style="flex:0 0 auto">
         <pre ascii="" class="archpre">             AI agents                             operators
 (HTTP :3000 / MCP, same listener)         (human API :3100 when split)
@@ -325,34 +348,97 @@ date: 2026-11-07
 │      local disk, or Cloud FS / NFS / CephFS / ... [EXT]                  │
 └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘</pre>
       </div>
-      <div style="flex:1; display:flex; flex-direction:column; gap:12px">
-        <div class="planecard">
-          <div class="pt">control plane</div>
-          <div class="pd">human gateway · prov sandlot · etcd — identities, templates, ownership</div>
-        </div>
-        <div class="planecard">
-          <div class="pt">exec plane</div>
-          <div class="pd">gateway → sandlot → sandvmm → microVM (warden) — every agent command</div>
-        </div>
-        <div class="planecard">
-          <div class="pt">storage plane</div>
-          <div class="pd">volumes + templates trees — prov writes · nodes access via virtio-fs</div>
-        </div>
-        <div class="planecard" style="border-left-color:var(--ink2)">
-          <div class="pt">roles — concepts.md</div>
-          <div class="pd"><b>gateway</b> &amp; <b>sandlot</b>: split by role — <b>exec / human</b> gateway · <b>exec / prov</b> sandlot — or one merged instance</div>
-          <div class="pd"><b>sandvmm</b> = VMM — fork + trim + dedicated extensions · <b>warden</b> = PID 1</div>
-        </div>
-      </div>
     </div>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">4 / 16</span></div>
 </section>
 
 
-<!-- ═══════════════ 5 · DESIGN PRINCIPLES ═══════════════ -->
+<!-- ═══════════════ 5 · TOPOLOGIES ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">04</span>Design principles</div>
+  <div class="kicker"><span class="no">04</span>Topologies</div>
+  <h2>Topologies</h2>
+  <div class="sub">Same binaries compose into four bare-metal shapes — then Kubernetes repackages the same topology.</div>
+  <div class="content">
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px">
+      <div class="diag">
+        <div class="mini" style="width:100%; border-color:var(--accent)"><b>1 · one machine — in-memory</b></div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">AI agents · operator</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">gateway (single-node)</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">sandlot (exec + prov)</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">microVMs (warden)</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">volumes — local disk</div>
+        <div class="shnote">no etcd · no DNS · zero external systems</div>
+      </div>
+      <div class="diag">
+        <div class="mini" style="width:100%; border-color:var(--accent)"><b>2 · one machine — etcd</b></div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">AI agents · operator</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">exec gateway · human gateway</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">etcd [EXT] — local</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">sandlot (exec) · sandlot (prov)</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">volumes — local disk</div>
+        <div class="shnote">split gateways + roles, one-host footprint</div>
+      </div>
+      <div class="diag">
+        <div class="mini" style="width:100%; border-color:var(--accent)"><b>3 · one gateway + N nodes</b></div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">AI agents · operator</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">exec gateway · human gateway · etcd [EXT]</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">exec nodes ×N · prov nodes ×M</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">volumes — shared FS</div>
+        <div class="shnote">every sandlot dials out · any node serves any SandFS</div>
+      </div>
+      <div class="diag">
+        <div class="mini" style="width:100%; border-color:var(--accent)"><b>4 · production — multi-GW + DNS</b></div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">AI agents · operator</div>
+        <div class="varr"><span class="ch">▼</span><span class="lab">:53</span></div>
+        <div class="mini" style="width:100%">sandns — owner-aware DNS</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">exec gateways ×2+ · human gateways ×H · etcd ×3 [EXT]</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">exec nodes ×N · prov nodes ×M</div>
+        <div class="varr"><span class="ch">▼</span></div>
+        <div class="mini" style="width:100%">volumes — shared FS</div>
+        <div class="shnote">agents spread across gateways by DNS · TLS everywhere</div>
+      </div>
+    </div>
+    <div class="cols" style="grid-template-columns:1.25fr 1fr; gap:16px">
+      <div class="panel">
+        <h3>Kubernetes — same topology, repackaged</h3>
+        <ul class="b sm" style="margin:0">
+          <li>gateways: <b>StatefulSets</b> — exec gateway behind a <b>headless Service</b> (stable pod identity) · etcd: StatefulSet</li>
+          <li>exec sandlot: <b>DaemonSet</b> — one pod per node (hostNetwork) · prov sandlot: Deployment · volumes via PV</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>exec-node pod — embedded (default) vs boxout</h3>
+        <ul class="b sm" style="margin:0">
+          <li><b>embedded</b>: one privileged container — sandlot → sandvmm → microVM · simplest, the default</li>
+          <li><b>boxout</b>: unprivileged sandlot (UID 65536, caps dropped) keeps the hot path — a privileged sidecar owns sandvmm · network · host mounts over UDS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">5 / 16</span></div>
+</section>
+
+<!-- ═══════════════ 6 · DESIGN PRINCIPLES ═══════════════ -->
+<section class="slide">
+  <div class="kicker"><span class="no">05</span>Design principles</div>
   <h2>Eight principles — the contract every change must preserve</h2>
   <div class="sub">Deliberately independent of implementation, timer values, and file paths — the principles do not change as the code evolves.</div>
   <div class="content" style="gap:16px">
@@ -371,65 +457,10 @@ date: 2026-11-07
       <div class="mini">weakening any one weakens the rest — all must hold</div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">5 / 16</span></div>
-</section>
-
-<!-- ═══════════════ 6 · TOPOLOGIES ═══════════════ -->
-<section class="slide">
-  <div class="kicker"><span class="no">05</span>Deployment topologies</div>
-  <h2>Same binaries, three shapes</h2>
-  <div class="sub">From one host to a fleet — roles split out of the same gateway and sandlot binaries.</div>
-  <div class="content">
-    <div class="cols" style="grid-template-columns:repeat(3,1fr); gap:20px">
-      <div class="diag">
-        <div class="mini" style="width:100%"><b>single-node</b> — the default</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">AI agents → <b>gateway</b> :3000</div>
-        <div class="varr"><span class="ch">▼</span><span class="lab">gRPC dial-out</span></div>
-        <div class="mini" style="width:100%"><b>sandlot</b> — exec + prov, one process</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">microVM pool · <b>warden</b> PID 1</div>
-        <div class="varr"><span class="ch">▼</span><span class="lab">virtio-fs</span></div>
-        <div class="mini" style="width:100%">volumes on <b>local disk</b></div>
-        <ul class="b sm" style="margin-top:12px">
-          <li>no external systems at all</li>
-          <li>identity: in-process store + snapshot file</li>
-        </ul>
-      </div>
-      <div class="diag">
-        <div class="mini" style="width:100%"><b>distributed</b> — the fleet</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">agents → <b>exec gateway ×N</b></div>
-        <div class="varr"><span class="ch">▼</span><span class="lab">etcd + sandns — owner-aware routing</span></div>
-        <div class="mini" style="width:100%"><b>exec sandlot ×N</b> nodes · microVMs</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">ops → human gw → <b>prov ×M</b></div>
-        <div class="varr"><span class="ch">▼</span><span class="lab">volume + template writes</span></div>
-        <div class="mini" style="width:100%">volumes on <b>shared FS</b> (NFS / CephFS / Cloud FS)</div>
-        <ul class="b sm" style="margin-top:12px">
-          <li>any node serves any SandFS</li>
-          <li>ownership moves via etcd · answers follow via sandns</li>
-        </ul>
-      </div>
-      <div class="diag">
-        <div class="mini" style="width:100%"><b>Kubernetes</b> — boxout mode</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">pod: <b>sandlot, unprivileged</b><br>UID 65536 · all caps dropped</div>
-        <div class="varr"><span class="ch">▼</span><span class="lab">UDS · SO_PEERCRED-verified</span></div>
-        <div class="mini" style="width:100%"><b>boxout</b> sidecar — privileged<br>sandvmm lifecycle · network · host mounts</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">sandvmm ×N · microVMs</div>
-        <ul class="b sm" style="margin-top:12px">
-          <li>hot path (set-fs · vsock · lease) needs <b>zero privileges</b></li>
-          <li>bare metal = embedded mode (the only mode)</li>
-        </ul>
-      </div>
-    </div>
-  </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">6 / 16</span></div>
 </section>
 
-<!-- ═══════════════ 6 · SANDFS ═══════════════ -->
+<!-- ═══════════════ 7 · SANDFS ═══════════════ -->
 <section class="slide">
   <div class="kicker"><span class="no">06</span>SandFS</div>
   <h2>One directory per agent — two modes</h2>
