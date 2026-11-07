@@ -126,7 +126,12 @@ date: 2026-11-07
     justify-content:center; text-align:center; font-size:13px; color:var(--muted); padding:8px 6px; line-height:1.3}
   .volb.act{border:2px solid var(--accent); background:var(--wash); color:var(--ink)}
   .conn{text-align:center; font-size:12px; color:var(--accent-deep); font-weight:600; padding:2px 0}
-  .shnote{font-size:11.5px; color:var(--muted); text-align:center; margin-top:8px; line-height:1.3}
+  .shtitle{font-size:15px; font-weight:650; text-align:center; margin:0 0 8px}
+  .actors{display:flex; justify-content:space-around; width:88%; font-size:12.5px; color:var(--ink2)}
+  .actors .ch{color:var(--baseline); font-size:14px}
+  .hostbox{border:1.5px solid var(--baseline); border-radius:8px; padding:12px 10px 10px; position:relative; width:100%}
+  .hostbox>.hl{position:absolute; top:-9px; left:10px; background:var(--surface); padding:0 6px;
+    font-size:11.5px; font-weight:650; color:var(--ink2)}
   /* nested rings (inside-out) */
   .ring{border:2.5px solid; border-radius:12px; padding:16px 16px 16px; position:relative}
   .ring>.rl{position:absolute; top:-12px; left:16px; background:var(--surface);
@@ -360,78 +365,101 @@ date: 2026-11-07
   <h2>Topologies</h2>
   <div class="sub">Same binaries compose into four bare-metal shapes — then Kubernetes repackages the same topology.</div>
   <div class="content">
-    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px">
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:start">
       <div class="diag">
-        <div class="mini" style="width:100%; border-color:var(--accent)"><b>1 · one machine — in-memory</b></div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">AI agents · operator</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">gateway (single-node)</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">sandlot (exec + prov)</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">microVMs (warden)</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">volumes — local disk</div>
-        <div class="shnote">no etcd · no DNS · zero external systems</div>
+        <div class="shtitle">one machine — in-memory</div>
+        <div class="actors"><span>AI agents</span><span>operator</span></div>
+        <div class="actors"><span class="ch">▼</span><span class="ch">▼</span></div>
+        <div class="hostbox">
+          <div class="hl">one machine</div>
+          <div class="hrow" style="gap:4px">
+            <div class="mini" style="flex:1">gateway<br>(single-node)</div>
+            <div class="varr" style="padding:0"><span class="ch">◄►</span></div>
+            <div class="mini" style="flex:1">sandlot (exec+prov)<br>sandvmm<br>microVM (warden)</div>
+          </div>
+          <div class="varr"><span class="ch">▼</span></div>
+          <div class="volb">SandFS volumes — local disk</div>
+        </div>
       </div>
       <div class="diag">
-        <div class="mini" style="width:100%; border-color:var(--accent)"><b>2 · one machine — etcd</b></div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">AI agents · operator</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">exec gateway · human gateway</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">etcd [EXT] — local</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">sandlot (exec) · sandlot (prov)</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">volumes — local disk</div>
-        <div class="shnote">split gateways + roles, one-host footprint</div>
+        <div class="shtitle">one machine — etcd</div>
+        <div class="actors"><span>AI agents</span><span>operator</span></div>
+        <div class="actors"><span class="ch">▼</span><span class="ch">▼</span></div>
+        <div class="hostbox">
+          <div class="hl">one machine</div>
+          <div class="hrow" style="gap:4px">
+            <div class="mini" style="flex:1">exec gateway</div>
+            <div class="mini" style="flex:1">human gateway</div>
+          </div>
+          <div class="varr"><span class="ch">▼</span></div>
+          <div class="mini">etcd [EXT]</div>
+          <div class="varr"><span class="ch">▼</span></div>
+          <div class="hrow" style="gap:4px">
+            <div class="mini" style="flex:1">sandlot (exec)</div>
+            <div class="mini" style="flex:1">sandlot (prov)</div>
+          </div>
+          <div class="varr"><span class="ch">▼</span></div>
+          <div class="volb">SandFS volumes — local disk</div>
+        </div>
       </div>
       <div class="diag">
-        <div class="mini" style="width:100%; border-color:var(--accent)"><b>3 · one gateway + N nodes</b></div>
+        <div class="shtitle">one gateway + N nodes</div>
+        <div class="actors"><span>AI agents</span><span>operator</span></div>
+        <div class="actors"><span class="ch">▼</span><span class="ch">▼</span></div>
+        <div class="hostbox">
+          <div class="hl">gateway host</div>
+          <div class="hrow" style="gap:4px">
+            <div class="mini" style="flex:1">exec gateway</div>
+            <div class="mini" style="flex:1">human gateway</div>
+          </div>
+          <div class="varr"><span class="ch">▼</span></div>
+          <div class="mini">etcd [EXT]</div>
+        </div>
         <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">AI agents · operator</div>
+        <div class="hrow" style="gap:8px; width:100%">
+          <div class="hostbox" style="flex:1">
+            <div class="hl">exec nodes ×N</div>
+            <div class="mini">sandlot (exec)<br>sandvmm<br>microVM (warden)</div>
+          </div>
+          <div class="hostbox" style="flex:1">
+            <div class="hl">prov nodes ×M</div>
+            <div class="mini">sandlot (prov)</div>
+          </div>
+        </div>
         <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">exec gateway · human gateway · etcd [EXT]</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">exec nodes ×N · prov nodes ×M</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">volumes — shared FS</div>
-        <div class="shnote">every sandlot dials out · any node serves any SandFS</div>
+        <div class="volb" style="width:100%">SandFS volumes — shared FS</div>
       </div>
       <div class="diag">
-        <div class="mini" style="width:100%; border-color:var(--accent)"><b>4 · production — multi-GW + DNS</b></div>
+        <div class="shtitle">production — multi-GW + DNS</div>
+        <div class="actors"><span>agents</span><span>operator</span></div>
+        <div class="actors"><span class="ch">▼</span><span class="ch">▼</span></div>
+        <div class="hrow" style="gap:4px; width:100%">
+          <div class="mini" style="flex:1">sandns ×2+</div>
+          <div class="mini" style="flex:1">exec gateways ×2+</div>
+          <div class="mini" style="flex:1">human gateways ×H</div>
+        </div>
         <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">AI agents · operator</div>
-        <div class="varr"><span class="ch">▼</span><span class="lab">:53</span></div>
-        <div class="mini" style="width:100%">sandns — owner-aware DNS</div>
+        <div class="mini" style="width:100%">etcd ×3 [EXT]</div>
         <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">exec gateways ×2+ · human gateways ×H · etcd ×3 [EXT]</div>
+        <div class="hrow" style="gap:8px; width:100%">
+          <div class="hostbox" style="flex:1">
+            <div class="hl">exec nodes ×N</div>
+            <div class="mini">sandlot (exec)<br>sandvmm<br>microVM (warden)</div>
+          </div>
+          <div class="hostbox" style="flex:1">
+            <div class="hl">prov nodes ×M</div>
+            <div class="mini">sandlot (prov)</div>
+          </div>
+        </div>
         <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">exec nodes ×N · prov nodes ×M</div>
-        <div class="varr"><span class="ch">▼</span></div>
-        <div class="mini" style="width:100%">volumes — shared FS</div>
-        <div class="shnote">agents spread across gateways by DNS · TLS everywhere</div>
+        <div class="volb" style="width:100%">SandFS volumes — shared FS</div>
       </div>
     </div>
-    <div class="cols" style="grid-template-columns:1.25fr 1fr; gap:16px">
-      <div class="panel">
-        <h3>Kubernetes — same topology, repackaged</h3>
-        <ul class="b sm" style="margin:0">
-          <li>gateways: <b>StatefulSets</b> — exec gateway behind a <b>headless Service</b> (stable pod identity) · etcd: StatefulSet</li>
-          <li>exec sandlot: <b>DaemonSet</b> — one pod per node (hostNetwork) · prov sandlot: Deployment · volumes via PV</li>
-        </ul>
-      </div>
-      <div class="panel">
-        <h3>exec-node pod — embedded (default) vs boxout</h3>
-        <ul class="b sm" style="margin:0">
-          <li><b>embedded</b>: one privileged container — sandlot → sandvmm → microVM · simplest, the default</li>
-          <li><b>boxout</b>: unprivileged sandlot (UID 65536, caps dropped) keeps the hot path — a privileged sidecar owns sandvmm · network · host mounts over UDS</li>
-        </ul>
-      </div>
-    </div>
+    <table style="width:auto; margin:14px auto 0">
+      <tr><th>Platform</th><th>Embedded</th><th>Boxout</th></tr>
+      <tr><td>Bare metal</td><td>✓ (the only mode)</td><td>—</td></tr>
+      <tr><td>Kubernetes</td><td>✓</td><td>✓</td></tr>
+    </table>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">5 / 16</span></div>
 </section>
