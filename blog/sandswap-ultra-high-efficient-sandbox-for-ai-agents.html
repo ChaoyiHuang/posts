@@ -38,7 +38,7 @@ date: 2026-11-07
   .kicker .no{color:var(--muted); font-weight:500; margin-right:10px}
   h2{font-size:33px; line-height:1.12; margin:0 0 5px; font-weight:680; letter-spacing:-.012em}
   .sub{font-size:16.5px; color:var(--ink2); margin:2px 0 14px; line-height:1.35}
-  .content{flex:1; min-height:0; display:flex; flex-direction:column; gap:14px}
+  .content{flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; justify-content:center}
   /* bullets — short, speakable */
   ul.b{list-style:none; margin:0; padding:0; font-size:18.5px; line-height:1.38}
   ul.b li{padding-left:22px; position:relative; margin-bottom:8px}
@@ -117,6 +117,11 @@ date: 2026-11-07
   .tla{display:flex; flex-direction:column; justify-content:center; padding:0 9px; min-width:158px}
   .tla .al{font-size:11.5px; color:var(--accent-deep); font-weight:600; text-align:center; line-height:1.25}
   .tla .ac{font-size:20px; color:var(--baseline); text-align:center; line-height:1.1}
+  .planecard{border:1.5px solid var(--hairline); border-left:4px solid var(--accent); border-radius:6px;
+    padding:9px 14px; background:var(--surface)}
+  .planecard .pt{font-size:15.5px; font-weight:660}
+  .planecard .pd{font-size:13.5px; color:var(--ink2); margin-top:2px; line-height:1.35}
+  .archpre{font-size:11px; line-height:1.18; display:inline-block; text-align:left; padding:8px 12px}
   .volb{border:1.5px dashed var(--baseline); border-radius:8px; display:flex; align-items:center;
     justify-content:center; text-align:center; font-size:13px; color:var(--muted); padding:8px 6px; line-height:1.3}
   .volb.act{border:2px solid var(--accent); background:var(--wash); color:var(--ink)}
@@ -264,10 +269,11 @@ date: 2026-11-07
       <div class="mini">top row — <b>one microVM over time</b> (compute)</div>
       <div class="mini">bottom row — <b>volumes/</b> (storage)</div>
       <div class="mini">dashed = nothing mounted</div>
+      <div class="mini" style="border-color:var(--accent)"><b>microVM = compute · SandFS = disk</b></div>
     </div>
     <ul class="b">
       <li><b>Swap in</b> = filter swap (~0.2 ms) + bind-mount — <b>no boot, no copy, no snapshot</b></li>
-      <li><b>SandFS</b> = one directory per agent — its persistent rootfs · local disk · NFS · CephFS · Cloud FS, any shared filesystem</li>
+      <li><b>SandFS</b> = the agent's persistent filesystem — everything it keeps: files, code, <code>workspace/</code>, <code>home/</code> · storage backend: local disk · NFS · CephFS · Cloud FS, …</li>
     </ul>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">3 / 16</span></div>
@@ -276,38 +282,68 @@ date: 2026-11-07
 <!-- ═══════════════ 4 · ARCHITECTURE ═══════════════ -->
 <section class="slide">
   <div class="kicker"><span class="no">03</span>Architecture</div>
-  <h2>Four components, three planes — built from scratch</h2>
-  <div class="sub">VMM fork · guest kernel · PID 1 · node daemon · gateway · DNS — all purpose-built for the ms-scale swap.</div>
-  <div class="content" style="gap:10px">
-    <pre ascii="">
-        AI agents                                operators
- (HTTP :3000 · MCP, same listener)        (human API — split :3100)
-        │                                         │
-        ▼                                         ▼
- ┌───────────────┐   ownership · routing   ┌───────────────┐
- │ exec gateway  │────►  etcd [EXT]  ◄─────│ human gateway │
- │ auth · lease  │        ▲ sandns :53     │ SandFS / tmpl │
- │ dispatch      │     (multi-gateway)     │ CRUD          │
- └───────┬───────┘                        └───────┬───────┘
-         │ gRPC bidi stream — sandlot dials out,  │ gRPC (prov dials out)
-         │ no open ports on nodes                 │
- ┌───────▼───────────────┐          ┌─────────────▼───────────┐
- │ exec sandlot ×N nodes │          │ prov sandlot ×M         │
- │ sandvmm · microVMs    │          │ volume + template writes│
- │ warden (PID 1)        │          │ OCI pull/push [EXT]     │
- │ one SandFS per VM     │          └─────────────┬───────────┘
- └───────┬───────────────┘                        │
-         │ virtio-fs — only the active agent's dir│
- ┌───────▼────────────────────────────────────────▼─┐
- ╎ volumes + templates — one directory per SandFS   ╎
- ╎ local disk · Cloud FS · NFS · CephFS [EXT]       ╎
- └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘</pre>
-    <div class="hrow" style="gap:14px">
-      <div class="mini" style="border-color:var(--accent)"><b>control plane</b> — human gw · prov · etcd</div>
-      <div class="mini" style="border-color:var(--accent)"><b>exec plane</b> — gateway → sandlot → microVM</div>
-      <div class="mini" style="border-color:var(--accent)"><b>storage plane</b> — prov writes · nodes read</div>
-      <div class="mini">agent code never touches control plane</div>
-      <div class="mini">distributed ≈ single-node latency</div>
+  <h2>Architecture — built from scratch</h2>
+  <div class="content">
+    <div style="display:flex; gap:22px; align-items:center">
+      <div style="flex:0 0 auto">
+        <pre ascii="" class="archpre">             AI agents                             operators
+(HTTP :3000 / MCP, same listener)         (human API :3100 when split)
+             │                                         │
+             ▼                                         ▼
+   ┌───────────────────┐                     ┌───────────────────┐
+   │ exec gateway      │                     │ human gateway     │
+   │ agent+MCP :3000   │                     │ human API :3100   │
+   │ stream :9998      │                     │ prov stream :9998 │
+   │ auth · ownership  │                     │ SandFS CRUD ·     │
+   │ sticky lease      │                     │ templates CRUD    │
+   └──────────────┬────┘                     └───┬───────────────┘
+      ▲           │                              │     ▲
+      │           │ownership               SandFS│     │ gRPC bidi stream
+      │           │routing state           state │     │ (sandlot dial out)
+      │           │     ┌───────────────┐        │     │
+      │           │     │ sandns [opt.] │        │     │
+      │           │     │ on DNS :53    │        │     │
+      │           │     └──────▲────────┘        │     │
+      │           │            │watch,read-only  │     │
+      │           │  ┌╌╌╌╌╌╌╌╌╌┴╌╌╌╌╌╌╌╌╌┐       │     │
+      │           └─►│    etcd [EXT]     │◄──────┘     │
+      │              │    (multi-gw)     │             │
+      │              └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘             │
+      │ gRPC bidi stream(sandlot dial out)             │
+┌─────▼─────────────────────────┐       ┌──────────────▼──────────────────┐
+│ node × N — exec sandlot       │       │ instances × M — prov sandlot    │
+│ sandvmm · microVMs (warden)   │       │ sandfs + template lifecycle     │
+│ one SandFS per microVM        │       │ OCI pull/push [EXT]             │
+│ at a time                     │       └──────────────┬──────────────────┘
+└─────┬─────────────────────────┘                      │
+      │ virtio-fs passthrough                          │ volume + template writes
+      │ — only the active agent's                      │
+      │ directory                                      │
+      ▼                                                ▼
+┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
+│      volumes + templates — one directory per SandFS                      │
+│      local disk, or Cloud FS / NFS / CephFS / ... [EXT]                  │
+└╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘</pre>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column; gap:12px">
+        <div class="planecard">
+          <div class="pt">control plane</div>
+          <div class="pd">human gateway · prov sandlot · etcd — identities, templates, ownership</div>
+        </div>
+        <div class="planecard">
+          <div class="pt">exec plane</div>
+          <div class="pd">gateway → sandlot → sandvmm → microVM (warden) — every agent command</div>
+        </div>
+        <div class="planecard">
+          <div class="pt">storage plane</div>
+          <div class="pd">volumes + templates trees — prov writes · nodes access via virtio-fs</div>
+        </div>
+        <div class="planecard" style="border-left-color:var(--ink2)">
+          <div class="pt">roles — concepts.md</div>
+          <div class="pd"><b>gateway</b> &amp; <b>sandlot</b>: split by role — <b>exec / human</b> gateway · <b>exec / prov</b> sandlot — or one merged instance</div>
+          <div class="pd"><b>sandvmm</b> = VMM — fork + trim + dedicated extensions · <b>warden</b> = PID 1</div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">4 / 16</span></div>
