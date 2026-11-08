@@ -101,6 +101,12 @@ date: 2026-11-07
   .pcard .pd{font-size:12.5px; color:var(--ink2); line-height:1.3}
   .pcard.pc4{border-color:var(--accent); background:var(--wash)}
   .pcard.pc4 .pn{color:var(--accent-deep)}
+  .lwhy{font-size:14px; color:var(--ink2); margin:0 0 8px}
+  .lwhy b{color:var(--accent-deep)}
+  .laytab{width:100%; border-collapse:collapse; font-size:13px}
+  .laytab td{padding:3.5px 8px 3.5px 0; border-bottom:1px solid var(--hairline); vertical-align:top; line-height:1.3}
+  .laytab td:first-child{white-space:nowrap; font-weight:650; color:var(--accent-deep); width:118px; padding-right:10px}
+  .laytab tr:last-child td{border-bottom:none}
   /* swap-out step flow */
   .steps{display:grid; grid-template-columns:repeat(5,1fr); gap:12px 12px}
   .step{border:1.5px solid var(--hairline); border-top:4px solid var(--accent); border-radius:6px;
@@ -160,7 +166,7 @@ date: 2026-11-07
   .title-slide{justify-content:flex-start}
   .title-slide .tbody{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
   .title-slide h1{font-size:53px; line-height:1.07; margin:10px 0 8px; font-weight:720; letter-spacing:-.016em}
-  .title-slide h1 .thin{color:var(--accent-deep)}
+  .title-slide h1 .thin{color:var(--ink); font-size:36px}
   .keymsg{font-size:20px; line-height:1.42; color:var(--ink); max-width:1040px}
   .keymsg b{color:var(--accent-deep)}
   .strip{display:flex; gap:10px; font-size:13.5px; color:var(--ink2); flex-wrap:wrap}
@@ -499,6 +505,7 @@ date: 2026-11-07
     <div class="hrow" style="gap:12px">
       <div class="mini"><b>together they guarantee:</b> never double-mounted · resilient to failures · latency at the transport limit</div>
       <div class="mini">weakening any one weakens the rest — all must hold</div>
+      <div class="mini"><b>overlay SandFS: detach / attach template</b> — swap the read-only base without losing agent work (workspace/ · home/ live in the volume)</div>
     </div>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">6 / 16</span></div>
@@ -551,21 +558,21 @@ date: 2026-11-07
 
 <!-- ═══════════════ 7 · SWAP-IN ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">07</span>Mechanism · swap-in:</span> cold path — filter swap + mount &amp; exec in ONE vsock round trip</h2>
+  <h2><span class="ktag"><span class="no">07</span>swap-in:</span> cold path — filter swap + mount &amp; exec in ONE vsock round trip</h2>
   <div class="sub">A cold request lands on an idle microVM from the warm pool — the request path contains no boot.</div>
   <div class="content" style="gap:10px">
     <pre ascii="">
  agent           gateway                sandlot             sandvmm       warden (PID 1)
    │ POST /execute  │                      │                   │                │
-   ├───────────────▶│ auth · claim · node  │                   │                │
+   ├───────────────►│ auth · claim · node  │                   │                │
    │                │ · open sticky lease  │                   │                │
-   │                ├─────────────────────▶│ bind idle pool VM │                │
-   │                │                      ├─ vm.set-fs ──────▶│ allowed_dirs   │
+   │                ├─────────────────────►│ bind idle pool VM │                │
+   │                │                      ├─ vm.set-fs ──────►│ allowed_dirs   │
    │                │                      │                   │ = [B]  ~0.2ms  │
-   │                │                      ├──── OP_MOUNT_AND_EXEC ────────────▶│ mount stack ·
+   │                │                      ├──── OP_MOUNT_AND_EXEC ────────────►│ mount stack ·
    │                │                      │                   │                │ chroot · exec
-   │                │                      │◀─────────── result + output ────────┤
-   │◀───────────────┤◀─────────────────────┤                   │                │
+   │                │                      │◄─────────── result + output ────────┤
+   │◄───────────────┤◄─────────────────────┤                   │                │
    │                │                      │ pool refills asynchronously        │</pre>
     <ul class="b">
       <li><b>Mount + exec — one vsock RTT</b> · cold path: one <code>OP_MOUNT_AND_EXEC</code> ≈ <b>2.3 ms</b> · warm path: one <code>OP_EXEC</code> ≈ <b>0.96 ms</b></li>
@@ -579,7 +586,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 8 · SWAP-OUT ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">08</span>Mechanism · swap-out:</span> the clearing chain — async, ordered, fail-closed</h2>
+  <h2><span class="ktag"><span class="no">08</span>swap-out:</span> the clearing chain — async, ordered, fail-closed</h2>
   <div class="sub">Off the response path · ≈3.1 ms P95 · 100% &lt; 5 ms even with 16 MB dirty pages.</div>
   <div class="content" style="gap:16px">
     <div class="steps" style="grid-template-columns:repeat(4,1fr)">
@@ -607,7 +614,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 10 · ZERO RESIDUE ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">09</span>The guarantee behind the swap:</span> zero residue — nothing of A survives into B</h2>
+  <h2><span class="ktag"><span class="no">09</span>Swap-out:</span> zero residue — nothing of A survives into B</h2>
   <div class="sub">The hard part is not the mount — it is proving the machine is empty. Every leak vector has a named close.</div>
   <div class="content">
     <div class="cols" style="grid-template-columns:1.15fr 1fr">
@@ -697,25 +704,29 @@ date: 2026-11-07
     <div class="cols">
       <div class="panel" style="border-color:var(--accent)">
         <h3>Layer 1 · warden — PID 1, in-VM</h3>
-        <ul class="b sm">
-          <li><b>why:</b> a process can only <b>name</b> the current mount — the namespace root <b>is</b> the SandFS</li>
-          <li>share mounted once per VM (<code>nosuid,nodev</code> inherited) · active volume bind → <code>/mnt/rootfs</code> · chroot</li>
-          <li>overlay rootfs <b>read-only by mount</b> — the kernel's property, not a permission bit · mode comes from the identity record, never probed from the agent-writable disk</li>
-          <li>hardening: masked read-only <code>/proc</code> · minimal <code>/dev</code> + fresh <code>/dev/shm</code> · fresh tmpfs <code>/tmp</code> · RAM-backed read-only busybox</li>
-          <li><b>MOUNT_GATE</b> + mounted-volume identity — the mount that loses the race is refused</li>
-          <li>per-exec fence: setsid · <b>NO_NEW_PRIVS</b> · caps ∅/10 · seccomp <b>−82</b> · RLIMIT 70% · warden PID 1, <code>dumpable=0</code></li>
-        </ul>
+        <div class="lwhy"><b>why it isolates:</b> a process can only <i>name</i> the current mount — the namespace root is the SandFS</div>
+        <table class="laytab">
+                      <tr><td>mount stack</td><td>share mounted once (<code>nosuid,nodev</code>) · active volume → <code>/mnt/rootfs</code> · chroot</td></tr>
+            <tr><td>read-only rootfs</td><td>overlay: a <b>kernel mount property</b> — not a permission bit</td></tr>
+            <tr><td>mode</td><td>from the identity record — never probed from agent-writable disk</td></tr>
+            <tr><td>hardening</td><td>masked <code>/proc</code> · minimal <code>/dev</code> · fresh tmpfs <code>/tmp</code> · read-only busybox</td></tr>
+            <tr><td>MOUNT_GATE</td><td>one mount at a time · volume identity re-checked</td></tr>
+            <tr><td>per-exec fence</td><td>setsid · NO_NEW_PRIVS · caps ∅/10 · seccomp −82 · RLIMIT 70%</td></tr>
+            <tr><td>warden itself</td><td>PID 1 · <code>dumpable=0</code> — untouchable</td></tr>
+          </table>
       </div>
       <div class="panel" style="border-color:var(--accent)">
         <h3>Layer 2 · sandvmm — the virtio-fs filter</h3>
-        <ul class="b sm">
-          <li><b>why:</b> a sibling <b>does not exist</b> — off-list lookup = <b>ENOENT</b>, a real errno, indistinguishable from a missing file</li>
-          <li>one virtio-fs device per VM — born at boot, <b>never hot-plugged</b> · no <code>vm.add-fs</code> route · multi-fs config refused</li>
-          <li><code>allowed_dirs</code> = exactly one directory · swapped by <code>vm.set-fs</code> ≈0.2 ms — host-side, the guest cannot influence it</li>
-          <li>entry shown under a <b>per-generation alias</b> — real names are HMAC secrets, never guest-pathable (<code>mountinfo</code> included)</li>
-          <li>name = <b>one component</b> (no <code>..</code>/<code>/</code>) · <code>openat2(IN_ROOT)</code> + <code>O_NOFOLLOW</code> · inodes held as descriptors · share-root mutations gated pre-dispatch, exhaustive over opcodes</li>
-          <li>filter <b>always on</b> — empty default, no off mode · every set-fs: table clear + epoch bump → stale handle = <b>ESTALE</b></li>
-        </ul>
+        <div class="lwhy"><b>why it isolates:</b> a sibling <i>does not exist</i> — off-list lookup = ENOENT</div>
+        <table class="laytab">
+                      <tr><td>one device</td><td>born at boot · never hot-plugged · no <code>vm.add-fs</code> · multi-fs refused</td></tr>
+            <tr><td>allowed_dirs</td><td>exactly <b>one</b> directory · <code>set-fs</code> ≈0.2 ms · host-side only</td></tr>
+            <tr><td>alias</td><td>per-swap random name — real names = HMAC secrets, never in guest</td></tr>
+            <tr><td>path rules</td><td>one component · <code>openat2(IN_ROOT)</code> · <code>O_NOFOLLOW</code> · inodes as fds</td></tr>
+            <tr><td>share-root gate</td><td>every mutation denied pre-dispatch — exhaustive opcode match</td></tr>
+            <tr><td>revocation</td><td>set-fs → tables cleared + epoch bump → stale handle = <b>ESTALE</b></td></tr>
+            <tr><td>always on</td><td>empty default · no off mode · failed swap keeps the old list</td></tr>
+          </table>
       </div>
     </div>
     <div class="hrow" style="gap:12px">
@@ -734,25 +745,28 @@ date: 2026-11-07
     <div class="cols">
       <div class="panel" style="border-color:var(--accent)">
         <h3>Layer 3 · sandlot / sandprov — per node</h3>
-        <ul class="b sm">
-          <li><b>why:</b> one serializer drives a strictly ordered swap — the VMM never sees the secrets</li>
-          <li>sandlot binds <b>one sandfs to one VM</b> · per-VM mount lock — never double-mounted, guarded independently <b>×4</b>: cluster · node · VM · chroot</li>
-          <li>order both ways: <b>filter before mount</b> · stale mount out <b>before</b> filter swap — never stack</li>
-          <li>protocol assumes a hostile peer: <code>mount_point</code> pinned to <code>/mnt/rootfs</code> · volume identity re-asserted at exec · malformed frame closes the connection — never PID 1</li>
-          <li>prov sandlot = the <b>only writer</b> of the volumes tree · egress identity published before mount, revoked at swap-out</li>
-          <li>volume names = <code>sf-</code> + HMAC-SHA256(seed, id) — <b>2<sup>128</sup></b> · seed <code>root:sandprov</code> 0640, never reaches the VMM · rotation re-keys every name</li>
-        </ul>
+        <div class="lwhy"><b>why it isolates:</b> one serializer drives a strictly ordered swap — the VMM sees no secrets</div>
+        <table class="laytab">
+                      <tr><td>binding</td><td>one sandfs ↔ one VM · per-VM mount lock</td></tr>
+            <tr><td>invariant ×4</td><td>cluster · node · VM · chroot — <b>each alone suffices</b></td></tr>
+            <tr><td>ordering</td><td>filter <b>before</b> mount · unmount <b>before</b> filter-clear · never stack</td></tr>
+            <tr><td>hostile-peer wire</td><td><code>mount_point</code> pinned · identity re-asserted at exec · bad frame → close, never PID 1</td></tr>
+            <tr><td>storage writer</td><td>prov sandlot <b>only</b> · egress identity before mount · revoked at swap-out</td></tr>
+            <tr><td>volume names</td><td><code>sf-</code> + HMAC-SHA256 = <b>2<sup>128</sup></b> · seed 0640 <code>sandprov</code> · rotation re-keys</td></tr>
+          </table>
       </div>
       <div class="panel" style="border-color:var(--accent)">
         <h3>Layer 4 · the host — 5 roles + vsockguard</h3>
-        <ul class="b sm">
-          <li><b>why:</b> every daemon lands on an identity with nothing left to take</li>
-          <li><b>sandlot 985</b> exec · <b>sandserv 986</b> credentials only · <b>sandvmm 987</b> parses guest requests, <b>zero capabilities</b> · <b>sandprov 983</b> storage writer · <b>sandtmpl 982</b> template group</li>
-          <li><b>vsockguard</b> — BPF LSM on <code>connect()</code>: warden port admits <b>only uid 985</b> (AF_VSOCK bypasses device nodes — only an in-kernel hook closes it) · warden answers host CID 2 only · guest kernel: no vsock loopback → ENODEV</li>
-          <li>share root owned by sandprov — daemon's group <b>traverse-only</b>: no listing, no writing beside tenants (kernel EACCES even if the gate regressed) · <code>/dev/vhost-vsock</code> 0600 sandvmm · <code>/dev/vsock</code> 0600 sandlot · volumes <code>nosuid,nodev</code></li>
-          <li>nftables fail-closed: per-TAP anti-spoof · <b>VM↔VM deny</b> · guest→host default-deny — can't install → sandlot refuses to start</li>
-          <li>net effect: a <b>fully compromised VMM</b> reads/writes only the volumes this VM has served — no listing, no name-guessing, no warden, no storage-plane writes</li>
-        </ul>
+        <div class="lwhy"><b>why it isolates:</b> every daemon lands on an identity with nothing to take</div>
+        <table class="laytab">
+                      <tr><td>5 roles</td><td><b>sandlot 985</b> exec · <b>sandserv 986</b> credentials · <b>sandvmm 987</b> zero caps · <b>sandprov 983</b> storage · <b>sandtmpl 982</b> templates</td></tr>
+            <tr><td>vsockguard</td><td>BPF LSM on <code>connect()</code> — warden port: <b>uid 985 only</b></td></tr>
+            <tr><td>warden port ×3</td><td>guest: no loopback (ENODEV) · vhost: no guest→guest · warden: host CID 2 only</td></tr>
+            <tr><td>share root</td><td>sandprov-owned · VMM group <b>traverse-only</b> · <code>nosuid,nodev</code></td></tr>
+            <tr><td>devices</td><td><code>/dev/vsock</code> 0600 sandlot · <code>/dev/vhost-vsock</code> 0600 sandvmm</td></tr>
+            <tr><td>nftables</td><td>VM↔VM deny · per-TAP anti-spoof · guest→host default-deny</td></tr>
+            <tr><td>VMM compromised</td><td><b>this VM's volumes only</b> — no listing · no guessing · no warden · no writes</td></tr>
+          </table>
       </div>
     </div>
   </div>
