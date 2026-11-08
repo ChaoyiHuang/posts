@@ -101,11 +101,11 @@ date: 2026-11-07
   .pcard .pd{font-size:12.5px; color:var(--ink2); line-height:1.3}
   .pcard.pc4{border-color:var(--accent); background:var(--wash)}
   .pcard.pc4 .pn{color:var(--accent-deep)}
-  .lwhy{font-size:14px; color:var(--ink2); margin:0 0 8px}
+  .lwhy{font-size:17px; color:var(--ink2); margin:0 0 9px}
   .lwhy b{color:var(--accent-deep)}
-  .laytab{width:100%; border-collapse:collapse; font-size:13px}
-  .laytab td{padding:3.5px 8px 3.5px 0; border-bottom:1px solid var(--hairline); vertical-align:top; line-height:1.3}
-  .laytab td:first-child{white-space:nowrap; font-weight:650; color:var(--accent-deep); width:118px; padding-right:10px}
+  .laytab{width:100%; border-collapse:collapse; font-size:16.5px}
+  .laytab td{padding:4px 8px 4px 0; border-bottom:1px solid var(--hairline); vertical-align:top; line-height:1.3}
+  .laytab td:first-child{white-space:nowrap; font-weight:650; color:var(--accent-deep); width:152px; padding-right:10px}
   .laytab tr:last-child td{border-bottom:none}
   /* swap-out step flow */
   .steps{display:grid; grid-template-columns:repeat(5,1fr); gap:12px 12px}
@@ -196,7 +196,7 @@ date: 2026-11-07
   <h1>Sandswap <span class="thin">— ultra high efficient sandbox for AI agents</span></h1>
   <div class="tbody">
     <div class="keymsg">
-      Different AI agents share and reuse <b>the same strongly-isolated microVM at millisecond
+      Different AI agents <b>share and reuse the same strongly-isolated microVM at millisecond
       granularity</b> — cutting agent execution-environment cost by <b>50–100×</b>.
     </div>
     <div class="kpis" style="margin-top:26px">
@@ -230,7 +230,7 @@ date: 2026-11-07
         <div style="flex:9; background:var(--accent-deep)"></div>
       </div>
       <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:13.5px; color:var(--ink2)">
-        <span>measured floor: minimal-token tool round trip P50 0.87–0.97 s (no real reasoning)</span>
+        <span>measured floor: minimal-token tool round trip P95 1.06–1.18 s (no real reasoning)</span>
         <span style="color:var(--accent-deep); font-weight:650">◀ tool exec ≈ 2 ms (e.g. read a 1 MB file) — sandbox needed only here</span>
       </div>
     </div>
@@ -505,7 +505,6 @@ date: 2026-11-07
     <div class="hrow" style="gap:12px">
       <div class="mini"><b>together they guarantee:</b> never double-mounted · resilient to failures · latency at the transport limit</div>
       <div class="mini">weakening any one weakens the rest — all must hold</div>
-      <div class="mini"><b>overlay SandFS: detach / attach template</b> — swap the read-only base without losing agent work (workspace/ · home/ live in the volume)</div>
     </div>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">6 / 16</span></div>
@@ -551,6 +550,7 @@ date: 2026-11-07
     </div>
     <ul class="b">
       <li>Persists across swaps, VM recycle, node migration — <code>pip</code> / <code>npm</code> / files all survive</li>
+      <li>overlay SandFS: <b>detach / attach template</b> — swap the read-only base without losing agent work (<code>workspace/</code> · <code>home/</code> live in the volume)</li>
     </ul>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">7 / 16</span></div>
@@ -558,7 +558,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 7 · SWAP-IN ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">07</span>swap-in:</span> cold path — filter swap + mount &amp; exec in ONE vsock round trip</h2>
+  <h2><span class="ktag"><span class="no">07</span>Swap-in:</span> cold path — filter swap + mount &amp; exec in ONE vsock round trip</h2>
   <div class="sub">A cold request lands on an idle microVM from the warm pool — the request path contains no boot.</div>
   <div class="content" style="gap:10px">
     <pre ascii="">
@@ -586,7 +586,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 8 · SWAP-OUT ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">08</span>swap-out:</span> the clearing chain — async, ordered, fail-closed</h2>
+  <h2><span class="ktag"><span class="no">08</span>Swap-out:</span> the clearing chain — async, ordered, fail-closed</h2>
   <div class="sub">Off the response path · ≈3.1 ms P95 · 100% &lt; 5 ms even with 16 MB dirty pages.</div>
   <div class="content" style="gap:16px">
     <div class="steps" style="grid-template-columns:repeat(4,1fr)">
@@ -664,7 +664,7 @@ date: 2026-11-07
           <h3>Runtime posture</h3>
           <ul class="b sm">
             <li><code>max_user_namespaces=0</code> — belt and braces</li>
-            <li><code>init_on_free=0</code> — fresh anonymous RAM, zeroing on alloc suffices</li>
+            <li><code>init_on_alloc</code> default-on — zeroed allocations; <code>init_on_free</code> optional (fresh RAM already zero)</li>
             <li>no vsock loopback transport → in-guest <code>connect()</code> = ENODEV</li>
             <li>kernel + initramfs = <b>pinned upstream artifact</b> — guests can't influence boots</li>
           </ul>
@@ -740,7 +740,7 @@ date: 2026-11-07
 <!-- ═══════════════ 13 · ISOLATION LAYERS 3-4 ═══════════════ -->
 <section class="slide">
   <h2><span class="ktag"><span class="no">12</span>Isolation · four layers (2/2):</span> the host — nobody is trusted, not even the VMM</h2>
-  <div class="sub">One serializer drives a strictly ordered swap with secrets the VMM never sees; every daemon lands on an identity with nothing left to take.</div>
+  <div class="sub">One serializer drives a strictly ordered swap with secrets the VMM never sees; every host service — sandlot · sandserv · sandvmm · sandprov — lands on an identity with nothing left to take.</div>
   <div class="content">
     <div class="cols">
       <div class="panel" style="border-color:var(--accent)">
@@ -757,7 +757,7 @@ date: 2026-11-07
       </div>
       <div class="panel" style="border-color:var(--accent)">
         <h3>Layer 4 · the host — 5 roles + vsockguard</h3>
-        <div class="lwhy"><b>why it isolates:</b> every daemon lands on an identity with nothing to take</div>
+        <div class="lwhy"><b>why it isolates:</b> sandlot · sandserv · sandvmm · sandprov — each an identity with nothing to take</div>
         <table class="laytab">
                       <tr><td>5 roles</td><td><b>sandlot 985</b> exec · <b>sandserv 986</b> credentials · <b>sandvmm 987</b> zero caps · <b>sandprov 983</b> storage · <b>sandtmpl 982</b> templates</td></tr>
             <tr><td>vsockguard</td><td>BPF LSM on <code>connect()</code> — warden port: <b>uid 985 only</b></td></tr>
@@ -777,35 +777,41 @@ date: 2026-11-07
 <!-- ═══════════════ 13 · LATENCY ═══════════════ -->
 <section class="slide">
   <h2><span class="ktag"><span class="no">13</span>Latency engineering:</span> where the milliseconds go</h2>
-  <div class="sub">Client round-trip decomposition, P50 in ms — bare metal, single-node HTTP · cold = cross-agent mount_and_exec · warm = sticky-lease hit.</div>
+  <div class="sub">Client round-trip decomposition, P95 in ms — bare metal, single-node HTTP · cold = cross-agent mount_and_exec · warm = sticky-lease hit.</div>
   <div class="content">
     <div class="cols" style="grid-template-columns:1.2fr 1fr">
       <div>
-        <div class="grouplbl">Cold — 2.0 ms total</div>
+        <div class="grouplbl">Cold — 2.1 ms total</div>
         <div class="bars">
-          <div class="brow"><div class="bl">client → gateway</div><div class="btrack"><div class="bfill" style="width:5.5%;background:var(--ord1)"></div><span class="bval" style="left:calc(5.5% + 6px)">0.11</span></div></div>
-          <div class="brow"><div class="bl">gateway → sandlot — auth · lease</div><div class="btrack"><div class="bfill" style="width:5.5%;background:var(--ord2)"></div><span class="bval" style="left:calc(5.5% + 6px)">0.11</span></div></div>
-          <div class="brow"><div class="bl">sandlot — set-fs + vsock</div><div class="btrack"><div class="bfill" style="width:9.5%;background:var(--ord3)"></div><span class="bval" style="left:calc(9.5% + 6px)">0.19</span></div></div>
-          <div class="brow"><div class="bl">warden — mount + fork/exec</div><div class="btrack"><div class="bfill" style="width:80%;background:var(--ord4)"></div><span class="bval" style="left:calc(80% + 6px)">1.60</span></div></div>
+          <div class="brow"><div class="bl">client → gateway</div><div class="btrack"><div class="bfill" style="width:6.5%;background:var(--ord1)"></div><span class="bval" style="left:calc(6.5% + 6px)">0.13</span></div></div>
+          <div class="brow"><div class="bl">gateway → sandlot — auth · lease</div><div class="btrack"><div class="bfill" style="width:7%;background:var(--ord2)"></div><span class="bval" style="left:calc(7% + 6px)">0.14</span></div></div>
+          <div class="brow"><div class="bl">sandlot — set-fs + vsock</div><div class="btrack"><div class="bfill" style="width:10.5%;background:var(--ord3)"></div><span class="bval" style="left:calc(10.5% + 6px)">0.21</span></div></div>
+          <div class="brow"><div class="bl">warden — mount + fork/exec</div><div class="btrack"><div class="bfill" style="width:84.5%;background:var(--ord4)"></div><span class="bval" style="left:calc(84.5% + 6px)">1.69</span></div></div>
         </div>
-        <div class="grouplbl" style="margin-top:8px">Warm — 0.92 ms total</div>
+        <div class="grouplbl" style="margin-top:8px">Warm — 1.0 ms total</div>
         <div class="bars">
-          <div class="brow"><div class="bl">client → gateway</div><div class="btrack"><div class="bfill" style="width:4.5%;background:var(--ord1)"></div><span class="bval" style="left:calc(4.5% + 6px)">0.09</span></div></div>
-          <div class="brow"><div class="bl">gateway → sandlot</div><div class="btrack"><div class="bfill" style="width:5%;background:var(--ord2)"></div><span class="bval" style="left:calc(5% + 6px)">0.10</span></div></div>
-          <div class="brow"><div class="bl">sandlot — vsock only</div><div class="btrack"><div class="bfill" style="width:4.5%;background:var(--ord3)"></div><span class="bval" style="left:calc(4.5% + 6px)">0.09</span></div></div>
-          <div class="brow"><div class="bl">warden — fork/exec only</div><div class="btrack"><div class="bfill" style="width:32%;background:var(--ord4)"></div><span class="bval" style="left:calc(32% + 6px)">0.64</span></div></div>
+          <div class="brow"><div class="bl">client → gateway</div><div class="btrack"><div class="bfill" style="width:6.5%;background:var(--ord1)"></div><span class="bval" style="left:calc(6.5% + 6px)">0.13</span></div></div>
+          <div class="brow"><div class="bl">gateway → sandlot</div><div class="btrack"><div class="bfill" style="width:7%;background:var(--ord2)"></div><span class="bval" style="left:calc(7% + 6px)">0.14</span></div></div>
+          <div class="brow"><div class="bl">sandlot — vsock only</div><div class="btrack"><div class="bfill" style="width:5%;background:var(--ord3)"></div><span class="bval" style="left:calc(5% + 6px)">0.10</span></div></div>
+          <div class="brow"><div class="bl">warden — fork/exec only</div><div class="btrack"><div class="bfill" style="width:33%;background:var(--ord4)"></div><span class="bval" style="left:calc(33% + 6px)">0.66</span></div></div>
         </div>
         <div class="axis"><span class="tick" style="left:0%">0</span><span class="tick" style="left:25%">0.5</span><span class="tick" style="left:50%">1.0</span><span class="tick" style="left:75%">1.5</span><span class="tick" style="left:100%">2.0 ms</span><span class="ln"></span></div>
       </div>
-      <ul class="b" style="align-self:center">
-        <li>Per request: <b>no boot · no storage op · no etcd I/O</b></li>
-        <li><b>No locks across RPCs</b> — bookkeeping lock only</li>
-        <li>Hot path = <b>1 gRPC → 1 set-fs (0.2 ms) → 1 vsock RTT</b></li>
-        <li>Swap-out ≈ 3.1 ms — <b>async, never on the response path</b></li>
-        <li>Distributed ≈ single-node — <b>within noise</b></li>
-        <li>A→B rotation on one VM ≈ <b>6 ms</b></li>
-        <li>Every response carries <b>ns-precision metrics</b> — the platform measures itself</li>
-      </ul>
+      <div style="align-self:center">
+        <div class="grouplbl" style="margin:0 0 4px">Why the overhead is this low — the design</div>
+        <ul class="b" style="font-size:17.5px">
+          <li><b>8 design principles</b> (p.6) drive every hot-path choice — P2 latency at the transport limit · P3 swap-out in the background · P5–P7 stick, never flap</li>
+          <li><b>All work in memory</b> — the main path never touches slow persistent storage: no boot · no storage op · no etcd I/O</li>
+          <li><b>Every transport hop cut</b> — 1 gRPC → 1 set-fs (0.2 ms) → 1 vsock RTT · no locks across RPCs — bookkeeping lock only</li>
+        </ul>
+        <div class="grouplbl" style="margin:12px 0 4px">…and it stays low</div>
+        <ul class="b sm">
+          <li>Swap-out ≈ 3.1 ms — <b>async, never on the response path</b></li>
+          <li>Distributed ≈ single-node — <b>within noise</b></li>
+          <li>A→B rotation on one VM ≈ <b>6 ms</b></li>
+          <li>Every response carries <b>ns-precision metrics</b> — the platform measures itself</li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">14 / 16</span></div>
@@ -813,24 +819,25 @@ date: 2026-11-07
 
 <!-- ═══════════════ 14 · CAPACITY ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">14</span>Measured capacity:</span> 183 reuses/s per microVM — 64 agents continuously served by one VM</h2>
-  <div class="sub">Bare-metal KVM · Xeon 8255C (96 threads) · pinned cores/NUMA · 1 vCPU / 256 MiB VMs · capacity defined by latency tiers.</div>
+  <h2><span class="ktag"><span class="no">14</span>Measured capacity:</span> 183 reuses/s per microVM</h2>
+  <div class="sub">Bare-metal KVM · Xeon 8255C — 48 physical cores (96 threads) · pinned cores/NUMA · 1 vCPU / 256 MiB VMs · capacity defined by latency tiers.</div>
   <div class="content" style="gap:12px">
     <div class="kpis">
       <div class="kpi"><div class="lbl">Ideal reuse rate</div><div class="val">183.95<small> cold/s</small></div><div class="note">per microVM · zero failures · 5 ms knee</div></div>
       <div class="kpi"><div class="lbl">Host total — 32 VMs</div><div class="val">5,886<small> cold/s</small></div><div class="note">one whole physical core per VM</div></div>
       <div class="kpi"><div class="lbl">Traffic-shaped</div><div class="val">53.06<small> cold/s</small></div><div class="note">per VM · 2,048 agents queued · 2.0× tier held</div></div>
-      <div class="kpi"><div class="lbl">Agent density</div><div class="val">64<small> agents/VM</small></div><div class="note">at the 0.9–1.5 s think floor — scales with think time</div></div>
+      <div class="kpi"><div class="lbl">Agent density</div><div class="val">64<small> agents/VM</small></div><div class="note">traffic-shaped · 53.06 cold/s × 1.2 s mean think</div></div>
     </div>
     <table>
       <tr><th>Scenario — physical-core mapping</th><th class="num">Per microVM</th><th class="num">Per host</th><th>Gate</th></tr>
       <tr><td>Ideal paced lanes — pure cold</td><td class="num">183.95 cold/s</td><td class="num">5,886 /s</td><td>zero failures at 5 ms knee</td></tr>
       <tr><td>Ideal — mixed, 1–3 requests/turn</td><td class="num">155.96 + 132.25 warm/s</td><td class="num">4,991 + 4,232 /s</td><td>zero failures at 6 ms knee</td></tr>
-      <tr><td>Realistic population — no failures</td><td class="num">62.5 agents/VM</td><td class="num">2,000 agents</td><td>mixed · 503s retried, not failed</td></tr>
+      <tr><td>Traffic-shaped — mixed · agents think 1.2 s</td><td class="num">39.73 + 33.66 warm/s</td><td class="num">1,271.5 + 1,077 /s</td><td>2.0× tier held · 48 agents/VM</td></tr>
     </table>
     <ul class="b">
       <li><b>Cost math:</b> 64 agents/VM measured ⇒ ~64× fewer VMs — density <b>scales with think time</b>; ideal ceiling ⇒ <b>~100× and beyond</b></li>
       <li>SMT mapping adds no host capacity — physical-core mapping is the recommendation · raw logs published</li>
+      <li><b>Core budget:</b> of 48 physical cores — <b>loadgen</b> 4 · <b>gateway + etcd</b> 4 · <b>sandlot</b> 4 · 4 spare for boot-failure replacement — <b>32 cores run microVMs</b></li>
     </ul>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">15 / 16</span></div>
@@ -841,10 +848,10 @@ date: 2026-11-07
   <h2><span class="ktag"><span class="no">15</span>Takeaways:</span> Sandswap in five lines</h2>
   <div class="content" style="gap:18px; justify-content:center">
     <ul class="b" style="font-size:20px">
-      <li style="margin-bottom:13px"><b>Compute ⟂ disk</b> — microVM = kernel + warden · SandFS directory = the rootfs</li>
+      <li style="margin-bottom:13px"><b>microVM = compute · SandFS = disk</b> — kernel + warden in the VM · the agent's whole disk is one host directory</li>
       <li style="margin-bottom:13px"><b>Swap the filesystem, not the machine</b> — 2.3 ms cold · 0.96 ms warm · 3.1 ms async out</li>
       <li style="margin-bottom:13px"><b>Zero residue</b> — proven at every layer, or the VM is destroyed</li>
-      <li style="margin-bottom:13px"><b>No isolation traded for speed</b> — stronger than container defaults, VM-grade throughout</li>
+      <li style="margin-bottom:13px"><b>No isolation traded for speed</b> — hardware VM isolation throughout, plus hardening beyond a plain VM</li>
       <li style="margin-bottom:13px"><b>Think in seconds, swap in milliseconds</b> — 183 reuses/s · 64 agents/VM · <b>50–100× cost cut</b></li>
     </ul>
     <div class="hrow" style="gap:12px; flex-wrap:wrap">
@@ -852,11 +859,9 @@ date: 2026-11-07
       <div class="mini">persistent workspace follows the agent</div>
       <div class="mini">HTTP + MCP · API key — zero code change</div>
       <div class="mini">bare metal · Kubernetes</div>
-      <div class="mini">code interpreters · CI · serverless</div>
     </div>
     <div class="strip">
       <span><b>Try it:</b> github.com/ChaoyiHuang/sandswap</span>
-      <span>docs: concepts → architecture → isolation &amp; swap → benchmarks</span>
       <span>every benchmark reproducible — scripts + raw logs published</span>
     </div>
   </div>
