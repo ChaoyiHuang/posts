@@ -926,6 +926,7 @@ date: 2026-11-07
 
 <script>
 (function(){
+  while(document.body.firstChild&&document.body.firstChild.nodeType===3){document.body.removeChild(document.body.firstChild);}
   var slides=[].slice.call(document.querySelectorAll('.slide'));
   var deck=document.getElementById('deck'), ctr=document.getElementById('ctr');
   var cur=0;
