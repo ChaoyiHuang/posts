@@ -219,11 +219,8 @@ date: 2026-11-07
         <div class="val">183<small> /s</small></div>
         <div class="note">ideal benchmark · A→B rotation ≈ 6 ms</div></div>
     </div>
-    <div class="strip" style="margin-top:22px">
-      <span>github.com/ChaoyiHuang/sandswap</span>
-    </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG</span><span class="r">1 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">1 / 17</span></div>
 </section>
 
 <!-- ═══════════════ 2 · PROBLEM ═══════════════ -->
@@ -301,6 +298,7 @@ date: 2026-11-07
       <li><b>SandFS</b> = the agent's persistent filesystem — everything it keeps: files, code, <code>workspace/</code>, <code>home/</code> · storage backend: local disk · NFS · CephFS · Cloud FS, …</li>
     </ul>
   </div>
+  <div style="position:absolute; left:56px; right:56px; top:596px; text-align:center; font-size:25px; line-height:1.35; color:var(--ink)"><b style="color:var(--accent-deep)">microVM redefinition:</b> <b>no task, no disk</b>.</div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">3 / 17</span></div>
 </section>
 
@@ -499,7 +497,7 @@ date: 2026-11-07
   <div class="sub">Deliberately independent of implementation, timer values, and file paths — the principles do not change as the code evolves.</div>
   <div class="content" style="gap:16px">
     <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px">
-      <div class="pcard"><div class="pn">P1</div><div class="pt">Everything persists</div><div class="pd">all meaningful state durable — resume after any failure</div></div>
+      <div class="pcard"><div class="pn">P1</div><div class="pt">Everything persists</div><div class="pd">all meaningful AI agent state durable — resume after any failure</div></div>
       <div class="pcard"><div class="pn">P2</div><div class="pt">Minimal E2E latency</div><div class="pd">gateway → sandlot → warden at the transport limit · no hot-path locks</div></div>
       <div class="pcard"><div class="pn">P3</div><div class="pt">Minimal swap cost</div><div class="pd">swap-in on the critical path · swap-out in the background</div></div>
       <div class="pcard"><div class="pn">P4 — SAFETY CORE</div><div class="pt">Never double-mounted</div><div class="pd">one SandFS on one microVM — at any instant, anywhere</div></div>
@@ -662,7 +660,7 @@ date: 2026-11-07
           <ul class="b sm">
             <li><b>Compiled out:</b> USER_NS · TUN/VETH · KVM · BPF · IO_URING · USERFAULTFD · OVERLAY_FS · POSIX_MQUEUE · PROC_KCORE · ZSWAP · DEVMEM · x32 ABI …</li>
             <li><b>Hardened in:</b> UMIP · no legacy vsyscall · hardened usercopy · <code>init_on_alloc</code></li>
-            <li><b>Backports:</b> 17 upstream stable fixes on pinned <code>v7.2.8</code> (cloud-hypervisor tag 2026-10-09) — net skb/UDP/IPv6 UAF &amp; checksum · futex hash UAF · AIO recursion · netlink net_cookie</li>
+            <li><b>Backports:</b> 17 stable fixes on pinned <code>v7.2.8</code> (cloud-hypervisor 2026-10-09) — TCP synack UAF · skb/UDP/IPv6 UAF &amp; csum · futex hash UAF · AIO recursion · netlink net_cookie</li>
             <li><b>Gates:</b> config check + <code>nm</code> symbol probe — a re-enabled symbol fails the build</li>
           </ul>
         </div>
@@ -730,14 +728,10 @@ date: 2026-11-07
             <tr><td>alias</td><td>per-swap random name — real names = HMAC secrets, never in guest</td></tr>
             <tr><td>path rules</td><td>one component · <code>openat2(IN_ROOT)</code> · <code>O_NOFOLLOW</code> · inodes as fds</td></tr>
             <tr><td>share-root gate</td><td>every mutation denied pre-dispatch — exhaustive opcode match</td></tr>
-            <tr><td>revocation</td><td>set-fs → tables cleared + epoch bump → stale handle = <b>ESTALE</b></td></tr>
+            <tr><td>revocation</td><td>set-fs → inode + handle tables cleared, epoch bump → stale handle = <b>ESTALE</b></td></tr>
             <tr><td>always on</td><td>empty default · no off mode · failed swap keeps the old list</td></tr>
           </table>
       </div>
-    </div>
-    <div class="hrow" style="gap:12px">
-      <div class="mini"><b>vs Docker / Kata:</b> NO_NEW_PRIVS ✓ · mount/unshare/bpf/ptrace ✗ · + a VMM filter — siblings are ENOENT, not forbidden</div>
-      <div class="mini">chroot escape changes nothing — every path above the mount still resolves through the filtered share</div>
     </div>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">12 / 17</span></div>
