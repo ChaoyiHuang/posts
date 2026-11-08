@@ -37,6 +37,8 @@ date: 2026-11-07
     color:var(--accent-deep); font-weight:600; margin:0 0 6px}
   .kicker .no{color:var(--muted); font-weight:500; margin-right:10px}
   h2{font-size:33px; line-height:1.12; margin:0 0 8px; font-weight:680; letter-spacing:-.012em}
+  h2 .ktag{color:var(--accent-deep)}
+  h2 .ktag .no{color:var(--muted); margin-right:10px}
   .sub{font-size:16.5px; color:var(--ink2); margin:2px 0 14px; line-height:1.35}
   .content{flex:1; min-height:0; display:flex; flex-direction:column; gap:14px; justify-content:center; padding-top:16px}
   /* bullets — short, speakable */
@@ -214,8 +216,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 2 · PROBLEM ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">01</span>The problem</div>
-  <h2>Isolation is priced per second — agents need it for milliseconds</h2>
+  <h2><span class="ktag"><span class="no">01</span>The problem:</span> isolation is priced per second — agents need it for milliseconds</h2>
   <div class="content">
     <div>
       <div style="display:flex; height:52px; border-radius:6px; overflow:hidden; border:1px solid var(--hairline)">
@@ -239,8 +240,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 3 · CORE IDEA ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">02</span>Core idea</div>
-  <h2>Swap the disk, not the machine</h2>
+  <h2><span class="ktag"><span class="no">02</span>Core idea:</span> swap the disk, not the machine</h2>
   <div class="sub">Compute and disk decoupled — the microVM is pure compute; the agent's disk is a directory.</div>
   <div class="content">
     <div style="display:grid; grid-template-columns:1fr 150px 1fr 150px 1fr 150px 1fr; align-items:stretch">
@@ -282,7 +282,7 @@ date: 2026-11-07
       <div class="mini">top row — one microVM over time (compute)</div>
       <div class="mini">bottom row — volumes/ (storage)</div>
       <div class="mini">dashed = nothing mounted</div>
-      <div class="mini" style="border-color:var(--accent)">microVM = compute · SandFS = disk</div>
+      <div class="mini">microVM = compute · SandFS = disk</div>
     </div>
     <ul class="b">
       <li><b>Swap in</b> = filter swap (~0.2 ms) + bind-mount — <b>no boot, no copy, no snapshot</b></li>
@@ -294,8 +294,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 4 · ARCHITECTURE ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">03</span>Architecture</div>
-  <h2>Architecture — built from scratch</h2>
+  <h2><span class="ktag"><span class="no">03</span>Architecture</span> — built from scratch</h2>
   <div class="content">
     <div style="display:flex; gap:22px; align-items:center">
       <div style="flex:1; display:flex; flex-direction:column; gap:12px">
@@ -365,8 +364,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 5 · TOPOLOGIES ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">04</span>Topologies</div>
-  <h2>Topologies</h2>
+  <h2><span class="ktag"><span class="no">04</span>Topologies</span></h2>
   <div class="sub">Same binaries compose into four bare-metal shapes — then Kubernetes repackages the same topology.</div>
   <div class="content">
     <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:start">
@@ -451,14 +449,12 @@ date: 2026-11-07
           <div class="mini" style="flex:1">exec gateways ×2+</div>
           <div class="mini" style="flex:1">human gateways ×H</div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; width:100%">
-          <div></div><div class="dashvert"></div><div class="dashvert"></div>
-        </div>
-        <div style="display:flex; align-items:center; width:70%; margin-left:auto">
-          <div class="dashline"></div><div class="etcdbox">etcd ×3 [EXT]</div><div class="dashline"></div>
-        </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; width:100%">
-          <div class="dashvert"></div><div class="dashvert"></div>
+        <div style="display:flex; width:100%; align-items:stretch">
+          <div style="width:42%; display:flex; justify-content:flex-end"><div class="dashvert" style="height:auto"></div></div>
+          <div style="width:49%; display:flex; justify-content:center; align-items:center">
+            <div class="etcdbox">etcd ×3 [EXT]</div>
+          </div>
+          <div style="width:9%; display:flex; justify-content:center"><div class="dashvert" style="height:auto"></div></div>
         </div>
         <div class="hrow" style="gap:8px; width:100%">
           <div class="hostbox" style="flex:1">
@@ -487,8 +483,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 6 · DESIGN PRINCIPLES ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">05</span>Design principles</div>
-  <h2>Eight principles — the contract every change must preserve</h2>
+  <h2><span class="ktag"><span class="no">05</span>Design principles:</span> the contract every change must preserve</h2>
   <div class="sub">Deliberately independent of implementation, timer values, and file paths — the principles do not change as the code evolves.</div>
   <div class="content" style="gap:16px">
     <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px">
@@ -511,20 +506,18 @@ date: 2026-11-07
 
 <!-- ═══════════════ 7 · SANDFS ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">06</span>SandFS</div>
-  <h2>One directory per agent — two modes</h2>
-  <div class="sub">The microVM is the compute; the SandFS is the disk. Everything the agent keeps lives here.</div>
+  <h2><span class="ktag"><span class="no">06</span>SandFS:</span> the agent's persistent filesystem — two modes</h2>
+  <div class="sub">The microVM is the compute; the SandFS is the disk. Each agent owns one or more SandFS instances — everything it keeps lives here.</div>
   <div class="content">
     <div class="cols">
       <div class="panel">
         <h3>Flat — the build mode</h3>
-        <div class="diag" style="align-items:stretch">
-          <div class="db" style="width:100%">
-            <div class="t">whole directory = writable rootfs</div>
-            <div class="d">bind → /mnt/rootfs (rw) · chroot here</div>
-          </div>
-        </div>
-        <ul class="b sm" style="margin-top:12px">
+<pre ascii="" style="border:none; padding:6px 0 0">chroot /mnt/rootfs — the whole volume, read-write
+├─ template files → writable copy — /usr /etc /bin all persist
+├─ /workspace     → plain dir in the volume (cwd)
+├─ /home/agent    → plain dir in the volume
+└─ /tmp           → plain dir in the volume — persists</pre>
+        <ul class="b sm" style="margin-top:8px">
           <li><code>apt</code> / <code>yum</code> work — 10 ambient caps</li>
           <li>seeded from local or OCI template</li>
           <li><b>freeze</b> → becomes a new template</li>
@@ -548,7 +541,6 @@ date: 2026-11-07
       <div class="mini"><b>build in flat</b></div><span style="color:var(--baseline); font-size:18px">→</span>
       <div class="mini"><b>save-as-template</b> → OCI artifact</div><span style="color:var(--baseline); font-size:18px">→</span>
       <div class="mini"><b>serve overlay ×N</b> from one immutable base</div>
-      <div class="mini" style="border-color:var(--accent)">mode + privileges from the <b>server-side record</b> — agents can't choose</div>
     </div>
     <ul class="b">
       <li>Persists across swaps, VM recycle, node migration — <code>pip</code> / <code>npm</code> / files all survive</li>
@@ -559,25 +551,24 @@ date: 2026-11-07
 
 <!-- ═══════════════ 7 · SWAP-IN ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">07</span>Mechanism · swap-in</div>
-  <h2>Cold path: filter swap + mount &amp; exec in ONE vsock round trip</h2>
-  <div class="sub">A cold request lands on a warm CLEAN VM from the pool — the request path contains no boot.</div>
+  <h2><span class="ktag"><span class="no">07</span>Mechanism · swap-in:</span> cold path — filter swap + mount &amp; exec in ONE vsock round trip</h2>
+  <div class="sub">A cold request lands on an idle microVM from the warm pool — the request path contains no boot.</div>
   <div class="content" style="gap:10px">
     <pre ascii="">
- agent          gateway                sandlot             sandvmm        warden (PID 1)
-   │ POST /execute │                      │                   │                │
-   ├──────────────▶│ auth · claim · node  │                   │                │
-   │               │ · open sticky lease  │                   │                │
-   │               ├─────────────────────▶│  bind idle CLEAN pool VM           │
-   │               │                      ├── vm.set-fs ─────▶│ allowed_dirs   │
-   │               │                      │                   │ = [B]  ~0.2ms  │
-   │               │                      ├──── OP_MOUNT_AND_EXEC ──────────▶ │ mount stack ·
-   │               │                      │                   │                │ chroot · exec
-   │               │                      │◀────────── result + output ───────┤
-   │◀──────────────┤◀─────────────────────┤                   │                │
-   │  response     │                      │   pool refills asynchronously     │</pre>
+ agent           gateway                sandlot             sandvmm       warden (PID 1)
+   │ POST /execute  │                      │                   │                │
+   ├───────────────▶│ auth · claim · node  │                   │                │
+   │                │ · open sticky lease  │                   │                │
+   │                ├─────────────────────▶│ bind idle pool VM │                │
+   │                │                      ├─ vm.set-fs ──────▶│ allowed_dirs   │
+   │                │                      │                   │ = [B]  ~0.2ms  │
+   │                │                      ├──── OP_MOUNT_AND_EXEC ────────────▶│ mount stack ·
+   │                │                      │                   │                │ chroot · exec
+   │                │                      │◀─────────── result + output ────────┤
+   │◀───────────────┤◀─────────────────────┤                   │                │
+   │                │                      │ pool refills asynchronously        │</pre>
     <ul class="b">
-      <li><b>Mount + exec — one vsock RTT</b> · warm path: one <code>OP_EXEC</code> ≈ <b>0.96 ms</b></li>
+      <li><b>Mount + exec — one vsock RTT</b> · cold path: one <code>OP_MOUNT_AND_EXEC</code> ≈ <b>2.3 ms</b> · warm path: one <code>OP_EXEC</code> ≈ <b>0.96 ms</b></li>
       <li>Ordering: <b>filter before mount</b> · <b>stale mount out before filter swap</b> — never stack</li>
       <li>Egress identity published <b>before</b> the first guest process</li>
       <li>Starved pool → fail fast <code>NO_AVAILABLE_SANDBOX</code> · refill async</li>
@@ -588,217 +579,35 @@ date: 2026-11-07
 
 <!-- ═══════════════ 8 · SWAP-OUT ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">08</span>Mechanism · swap-out</div>
-  <h2>The clearing chain — async, ordered, fail-closed</h2>
+  <h2><span class="ktag"><span class="no">08</span>Mechanism · swap-out:</span> the clearing chain — async, ordered, fail-closed</h2>
   <div class="sub">Off the response path · ≈3.1 ms P95 · 100% &lt; 5 ms even with 16 MB dirty pages.</div>
   <div class="content" style="gap:16px">
-    <div class="steps">
-      <div class="step"><div class="n">1 · warden</div><div class="t">mount gate</div><div class="d">drain in-flight ops</div></div>
-      <div class="step"><div class="n">2 · warden</div><div class="t">cgroup.kill</div><div class="d">atomic tree SIGKILL</div></div>
-      <div class="step"><div class="n">3 · warden</div><div class="t">rule-A sweep</div><div class="d">kill all &gt; PID 1 — catches setsid stragglers</div></div>
-      <div class="step"><div class="n">4 · warden</div><div class="t">unmount tree</div><div class="d">child→parent · never MNT_DETACH</div></div>
-      <div class="step"><div class="n">5 · warden</div><div class="t">drop_caches=3</div><div class="d">pagecache · dentries · inodes</div></div>
-      <div class="step"><div class="n">6 · warden</div><div class="t">IPC sweep</div><div class="d">SysV IPC · user keyring</div></div>
-      <div class="step"><div class="n">7 · warden</div><div class="t">socket sweep</div><div class="d">dead-state TCP · ARP flush</div></div>
-      <div class="step"><div class="n">8 · warden</div><div class="t">final gate</div><div class="d">zombie / D-state → fail</div></div>
-      <div class="step end"><div class="n">9 · sandlot</div><div class="t">set-fs clear</div><div class="d">allowed_dirs = [] · egress revoked</div></div>
-      <div class="step end" style="border-top-color:var(--ink2); background:var(--wash)"><div class="n">outcome</div><div class="t">VM CLEAN</div><div class="d">back to pool — or destroyed</div></div>
+    <div class="steps" style="grid-template-columns:repeat(4,1fr)">
+      <div class="step"><div class="n">1 · warden</div><div class="t">gate (write)</div><div class="d">wait out in-flight sync execs / file ops</div></div>
+      <div class="step"><div class="n">2 · warden</div><div class="t">cgroup.kill</div><div class="d">SIGKILL the agent's whole process tree, poll empty</div></div>
+      <div class="step"><div class="n">3 · warden</div><div class="t">rule-A sweep</div><div class="d">SIGKILL every live userspace process except PID 1</div></div>
+      <div class="step"><div class="n">4 · warden</div><div class="t">child mounts</div><div class="d">home, workspace, resolv.conf + busybox file binds</div></div>
+      <div class="step"><div class="n">5 · warden</div><div class="t">masked mounts</div><div class="d">proc covers, dev/pts, /dev/shm, /dev, proc, /tmp</div></div>
+      <div class="step"><div class="n">6 · warden</div><div class="t">umount /mnt/rootfs</div><div class="d">flush dirty pages, detach the mount</div></div>
+      <div class="step"><div class="n">7 · warden</div><div class="t">drop_caches=3</div><div class="d">evict clean pagecache + dentries + inodes</div></div>
+      <div class="step"><div class="n">8 · warden</div><div class="t">kernel-object sweep</div><div class="d">SysV IPC, user keyring</div></div>
+      <div class="step"><div class="n">9 · warden</div><div class="t">socket sweep</div><div class="d">dead-state TCP sockets, flush the neighbor table</div></div>
+      <div class="step"><div class="n">10 · warden</div><div class="t">final-state gate</div><div class="d">zombie / D-state above PID 1 fails the unmount</div></div>
+      <div class="step end"><div class="n">11 · sandlot</div><div class="t">set-fs clear</div><div class="d">allowed_dirs = [] · bookkeeping · egress revoked</div></div>
+      <div class="step end" style="border-top-color:var(--ink2); background:var(--wash)"><div class="n">12 · outcome</div><div class="t">VM CLEAN</div><div class="d">back to pool — or destroyed</div></div>
     </div>
     <ul class="b">
       <li>Unprovable teardown → <b>VM destroyed &amp; replaced, never reused</b> — boot cost stays off the path</li>
-      <li>Filter clear runs <b>after</b> guest unmount · every mount step has its teardown twin</li>
+      <li>No <b>MNT_DETACH</b> — EBUSY → VM destroyed · filter clear runs <b>after</b> guest unmount · every mount step has its teardown twin</li>
       <li>Recycle bounds (uses / mounts / agents / memory) = <b>hygiene, not correctness</b></li>
     </ul>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">9 / 16</span></div>
 </section>
 
-<!-- ═══════════════ 9 · GUEST KERNEL HARDENING ═══════════════ -->
+<!-- ═══════════════ 10 · ZERO RESIDUE ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">09</span>Guest kernel hardening</div>
-  <h2>The kernel is the trust root under the swap</h2>
-  <div class="sub">The kernel executes every in-VM clear — an implant would survive tenant switches. Every layer below cuts its probability or its reach.</div>
-  <div class="content">
-    <div class="cols" style="grid-template-columns:1.05fr 1fr">
-      <div style="display:flex; flex-direction:column; gap:12px">
-        <div class="panel" style="border-color:var(--accent)">
-          <h3>Shrunk at build time — kernel/build.sh</h3>
-          <ul class="b sm">
-            <li><b>Compiled out:</b> USER_NS · TUN/VETH · KVM · BPF · IO_URING · USERFAULTFD · OVERLAY_FS · POSIX_MQUEUE · PROC_KCORE · ZSWAP · DEVMEM · x32 ABI …</li>
-            <li><b>Hardened in:</b> UMIP · no legacy vsyscall · hardened usercopy · <code>init_on_alloc</code></li>
-            <li><b>Backports:</b> netlink <code>net_cookie</code> hash · futex/AIO recursion fixes</li>
-            <li><b>Gates:</b> config check + <code>nm</code> symbol probe — a re-enabled symbol fails the build</li>
-          </ul>
-        </div>
-        <div class="panel">
-          <h3>Runtime posture</h3>
-          <ul class="b sm">
-            <li><code>max_user_namespaces=0</code> — belt and braces</li>
-            <li><code>init_on_free=0</code> — fresh anonymous RAM, zeroing on alloc suffices</li>
-            <li>no vsock loopback transport → in-guest <code>connect()</code> = ENODEV</li>
-            <li>kernel + initramfs = <b>pinned upstream artifact</b> — guests can't influence boots</li>
-          </ul>
-        </div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:12px">
-        <div class="panel">
-          <h3>What agent code can ask of it — per-exec fence</h3>
-          <ul class="b sm">
-            <li>seccomp <b>deny 82</b>: mount API · unshare/setns · ptrace class · bpf · perf · keyring · mqueue · modules · NUMA</li>
-            <li>sched / prlimit calls: <b>self-target only</b> (warden shares uid 0)</li>
-            <li><code>NO_NEW_PRIVS</code> · caps ∅ (strict) / 10 (install)</li>
-            <li>balanced cBPF tree — <code>log₂N</code> comparisons, length unchanged</li>
-          </ul>
-        </div>
-        <div class="panel" style="border-color:var(--accent)">
-          <h3>Blast radius — bounded by policy</h3>
-          <ul class="b sm">
-            <li>compromise reads <b>this VM's volumes only</b> — never fleet-wide</li>
-            <li><code>affinity_vms</code> 3 · <code>max_distinct_agents</code> 300 · <code>max_mounts</code> 10k · <code>max_uses</code> 100k</li>
-            <li>egress-only network · per-agent identity on every flow</li>
-            <li>high-security answer: <b>dedicated cluster</b>; next: ms-scale boot → destroy-after-every-use</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">10 / 16</span></div>
-</section>
-
-<!-- ═══════════════ 10 · ISOLATION INSIDE-OUT ═══════════════ -->
-<section class="slide">
-  <div class="kicker"><span class="no">10</span>Isolation · from inside out (1/2)</div>
-  <h2>Three rings around the agent — exec → mount stack → VMM filter</h2>
-  <div class="sub">The filter decides what <i>exists</i> for the guest; the mount stack decides what can be <i>named</i>; the fence decides what can be <i>asked</i>.</div>
-  <div class="content">
-    <div class="cols" style="grid-template-columns:1.25fr 1fr">
-      <div class="diag" style="justify-content:center">
-        <div class="ring" style="border-color:var(--ord4)">
-          <div class="rl" style="color:var(--ord4)">VMM — virtio-fs filter</div>
-          <div class="ring" style="border-color:var(--ord2); margin-top:10px">
-            <div class="rl" style="color:var(--ord2)">warden — guest mount stack</div>
-            <div class="ring" style="border-color:var(--ord1); margin-top:10px; background:var(--wash)">
-              <div class="rl" style="color:var(--accent-deep)">every exec</div>
-              <div style="text-align:center; padding:8px 6px 2px; font-size:15.5px; line-height:1.5">
-                <b>setsid · chroot</b> · scrubbed env<br>
-                <b>NO_NEW_PRIVS</b> · caps ∅/10<br>
-                seccomp <b>−82</b> · RLIMIT 70%
-              </div>
-            </div>
-            <div style="text-align:center; padding:8px 6px 2px; font-size:14px; color:var(--ink2)">
-              bind → /mnt/rootfs · read-only busybox · masked /proc · minimal /dev · fresh tmpfs /tmp
-            </div>
-          </div>
-          <div style="text-align:center; padding:10px 6px 0; font-size:14px; color:var(--ink2)">
-            one permanent virtio-fs device · <b>allowed_dirs = one directory</b>
-          </div>
-        </div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:12px; justify-content:center">
-        <div>
-          <span class="chip" style="border-color:var(--ord1)">exec fence</span>
-          <ul class="b sm" style="margin-top:6px">
-            <li>namespace root <b>is</b> the SandFS</li>
-            <li>warden untouchable: PID 1 · <code>dumpable=0</code> · caps frozen</li>
-          </ul>
-        </div>
-        <div>
-          <span class="chip" style="border-color:var(--ord2)">mount stack</span>
-          <ul class="b sm" style="margin-top:6px">
-            <li>read-only rootfs = <b>kernel-enforced</b></li>
-            <li>fail-closed: hardening fails → <b>refuse the mount</b></li>
-          </ul>
-        </div>
-        <div>
-          <span class="chip" style="border-color:var(--ord4)">VMM filter</span>
-          <ul class="b sm" style="margin-top:6px">
-            <li>off-list = <b>ENOENT</b> — sibling ≈ nonexistent</li>
-            <li>per-generation alias — real names never in guest</li>
-            <li>names = one component · <code>openat2(IN_ROOT)</code> · no symlink follow</li>
-            <li>every set-fs: table clear + epoch bump → <b>ESTALE</b></li>
-            <li>fail-closed: empty default · no "filter off" · no add-fs route</li>
-          </ul>
-        </div>
-        <div class="mini" style="border-color:var(--accent)"><b>vs Docker / Kata:</b> NO_NEW_PRIVS ✓ · mount/unshare/bpf/ptrace ✗ · + VMM filter</div>
-      </div>
-    </div>
-  </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">11 / 16</span></div>
-</section>
-
-<!-- ═══════════════ 11 · ISOLATION HOST SIDE ═══════════════ -->
-<section class="slide">
-  <div class="kicker"><span class="no">11</span>Isolation · from inside out (2/2)</div>
-  <h2>The host side — nobody is trusted, not even the VMM</h2>
-  <div class="sub">Millisecond paths usually mean trusting your peers; Sandswap gets ms without trusting anyone.</div>
-  <div class="content">
-    <div class="cols" style="grid-template-columns:1.2fr 1fr">
-      <div class="diag" style="justify-content:center">
-        <div class="db acc" style="width:560px">
-          <div class="t">microVM — kernel + warden</div>
-          <div class="d">warden port vsock :1024 — <b>zero auth by design</b></div>
-        </div>
-        <div class="hrow" style="padding:4px 0">
-          <div class="varr"><span class="ch">▼</span><span class="lab">vsock — vhost-vsock in kernel, zero VMEXIT</span></div>
-          <div class="varr"><span class="ch">▼</span><span class="lab">virtio-fs requests</span></div>
-        </div>
-        <div class="hrow" style="gap:14px">
-          <div class="db" style="width:250px">
-            <div class="t">sandlot — uid 985</div>
-            <div class="d"><b>vsockguard</b> BPF LSM: only this uid dials the warden port</div>
-          </div>
-          <div class="db" style="width:250px">
-            <div class="t">sandvmm — uid 987</div>
-            <div class="d"><b>zero capabilities</b> · parses untrusted guest requests</div>
-          </div>
-        </div>
-        <div class="varr"><span class="ch">▼</span><span class="lab">FUSE service — writes only inside the one allowed dir</span></div>
-        <div class="db" style="width:560px">
-          <div class="t">share root — owned by sandprov (983)</div>
-          <div class="d">daemon's group: <b>traverse-only</b> — no listing, no writing beside tenants</div>
-          <div class="d">volume names: <b>sf- + HMAC-SHA256</b> — 128-bit · seed never reaches the VMM · rotation re-keys all</div>
-        </div>
-        <div class="varr"><span class="ch">▼</span><span class="lab">eth0 → one shared bridge</span></div>
-        <div class="db" style="width:560px">
-          <div class="t">nftables — fail-closed baseline</div>
-          <div class="d">per-TAP anti-spoof · <b>VM↔VM deny</b> · guest→host default-deny · can't install → sandlot refuses to start</div>
-        </div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:12px; justify-content:center">
-        <div class="panel">
-          <h3>Warden port closed 3×</h3>
-          <ul class="b sm">
-            <li>guest kernel: <b>no vsock loopback</b> → ENODEV</li>
-            <li>vhost-vsock: <b>never relays guest→guest</b></li>
-            <li>warden: accepts <b>host CID 2 only</b></li>
-          </ul>
-        </div>
-        <div class="panel">
-          <h3>Protocol assumes a hostile peer</h3>
-          <ul class="b sm">
-            <li><code>mount_point</code> pinned to <code>/mnt/rootfs</code></li>
-            <li>volume-identity cross-check — mismatch → <b>refuse, don't execute</b></li>
-            <li>malformed frame → close connection, <b>never PID 1</b></li>
-          </ul>
-        </div>
-        <div class="panel" style="border-color:var(--accent)">
-          <h3>Egress identity</h3>
-          <ul class="b sm">
-            <li>unforgeable · <b>per attachment</b></li>
-            <li>published before mount · revoked at swap-out</li>
-            <li>every flow attributed to its agent</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">12 / 16</span></div>
-</section>
-
-<!-- ═══════════════ 12 · ZERO RESIDUE ═══════════════ -->
-<section class="slide">
-  <div class="kicker"><span class="no">12</span>The guarantee behind the swap</div>
-  <h2>Zero residue — nothing of A survives into B</h2>
+  <h2><span class="ktag"><span class="no">09</span>The guarantee behind the swap:</span> zero residue — nothing of A survives into B</h2>
   <div class="sub">The hard part is not the mount — it is proving the machine is empty. Every leak vector has a named close.</div>
   <div class="content">
     <div class="cols" style="grid-template-columns:1.15fr 1fr">
@@ -825,13 +634,135 @@ date: 2026-11-07
       </div>
     </div>
   </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">10 / 16</span></div>
+</section>
+
+<!-- ═══════════════ 11 · GUEST KERNEL HARDENING ═══════════════ -->
+<section class="slide">
+  <h2><span class="ktag"><span class="no">10</span>Guest kernel hardening:</span> the kernel is the trust root under the swap</h2>
+  <div class="sub">The kernel executes every in-VM clear — an implant would survive tenant switches. Every layer below cuts its probability or its reach.</div>
+  <div class="content">
+    <div class="cols" style="grid-template-columns:1.05fr 1fr">
+      <div style="display:flex; flex-direction:column; gap:12px">
+        <div class="panel" style="border-color:var(--accent)">
+          <h3>Shrunk at build time — kernel/build.sh</h3>
+          <ul class="b sm">
+            <li><b>Compiled out:</b> USER_NS · TUN/VETH · KVM · BPF · IO_URING · USERFAULTFD · OVERLAY_FS · POSIX_MQUEUE · PROC_KCORE · ZSWAP · DEVMEM · x32 ABI …</li>
+            <li><b>Hardened in:</b> UMIP · no legacy vsyscall · hardened usercopy · <code>init_on_alloc</code></li>
+            <li><b>Backports:</b> 17 upstream stable fixes on pinned <code>v7.2.8</code> (cloud-hypervisor tag 2026-10-09) — net skb/UDP/IPv6 UAF &amp; checksum · futex hash UAF · AIO recursion · netlink net_cookie</li>
+            <li><b>Gates:</b> config check + <code>nm</code> symbol probe — a re-enabled symbol fails the build</li>
+          </ul>
+        </div>
+        <div class="panel" style="border-color:var(--accent)">
+          <h3>Runtime posture</h3>
+          <ul class="b sm">
+            <li><code>max_user_namespaces=0</code> — belt and braces</li>
+            <li><code>init_on_free=0</code> — fresh anonymous RAM, zeroing on alloc suffices</li>
+            <li>no vsock loopback transport → in-guest <code>connect()</code> = ENODEV</li>
+            <li>kernel + initramfs = <b>pinned upstream artifact</b> — guests can't influence boots</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px">
+        <div class="panel" style="border-color:var(--accent)">
+          <h3>What agent code can ask of it — per-exec fence</h3>
+          <ul class="b sm">
+            <li>seccomp <b>deny 82</b>: mount API · unshare/setns · ptrace class · bpf · perf · keyring · mqueue · modules · NUMA</li>
+            <li>sched / prlimit calls: <b>self-target only</b> (warden shares uid 0)</li>
+            <li><code>NO_NEW_PRIVS</code> · caps ∅ (strict) / 10 (install)</li>
+            <li>balanced cBPF tree — <code>log₂N</code> comparisons, length unchanged</li>
+          </ul>
+        </div>
+        <div class="panel" style="border-color:var(--accent)">
+          <h3>Blast radius — bounded by policy</h3>
+          <ul class="b sm">
+            <li>compromise reads <b>this VM's volumes only</b> — never fleet-wide</li>
+            <li><code>affinity_vms</code> 3 · <code>max_distinct_agents</code> 300 · <code>max_mounts</code> 10k · <code>max_uses</code> 100k</li>
+            <li>egress-only network · per-agent identity on every flow</li>
+            <li>high-security answer: <b>dedicated cluster</b></li>
+            <li><b>TODO — make destroy-after-every-use practical:</b> boot is only kernel + warden, inherently lightweight — once boot reaches the <b>ms range</b> (≈ swap-out cleanup), destroy-after-every-use drops the kernel-implant risk to its minimum</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">11 / 16</span></div>
+</section>
+
+<!-- ═══════════════ 12 · ISOLATION LAYERS 1-2 ═══════════════ -->
+<section class="slide">
+  <h2><span class="ktag"><span class="no">11</span>Isolation · four layers (1/2):</span> inside the machine — the warden &amp; the VMM filter</h2>
+  <div class="sub">The warden decides what can be <i>named</i>; the filter decides what <i>exists</i> — a sibling tenant is ENOENT, not merely forbidden.</div>
+  <div class="content">
+    <div class="cols">
+      <div class="panel" style="border-color:var(--accent)">
+        <h3>Layer 1 · warden — PID 1, in-VM</h3>
+        <ul class="b sm">
+          <li><b>why:</b> a process can only <b>name</b> the current mount — the namespace root <b>is</b> the SandFS</li>
+          <li>share mounted once per VM (<code>nosuid,nodev</code> inherited) · active volume bind → <code>/mnt/rootfs</code> · chroot</li>
+          <li>overlay rootfs <b>read-only by mount</b> — the kernel's property, not a permission bit · mode comes from the identity record, never probed from the agent-writable disk</li>
+          <li>hardening: masked read-only <code>/proc</code> · minimal <code>/dev</code> + fresh <code>/dev/shm</code> · fresh tmpfs <code>/tmp</code> · RAM-backed read-only busybox</li>
+          <li><b>MOUNT_GATE</b> + mounted-volume identity — the mount that loses the race is refused</li>
+          <li>per-exec fence: setsid · <b>NO_NEW_PRIVS</b> · caps ∅/10 · seccomp <b>−82</b> · RLIMIT 70% · warden PID 1, <code>dumpable=0</code></li>
+        </ul>
+      </div>
+      <div class="panel" style="border-color:var(--accent)">
+        <h3>Layer 2 · sandvmm — the virtio-fs filter</h3>
+        <ul class="b sm">
+          <li><b>why:</b> a sibling <b>does not exist</b> — off-list lookup = <b>ENOENT</b>, a real errno, indistinguishable from a missing file</li>
+          <li>one virtio-fs device per VM — born at boot, <b>never hot-plugged</b> · no <code>vm.add-fs</code> route · multi-fs config refused</li>
+          <li><code>allowed_dirs</code> = exactly one directory · swapped by <code>vm.set-fs</code> ≈0.2 ms — host-side, the guest cannot influence it</li>
+          <li>entry shown under a <b>per-generation alias</b> — real names are HMAC secrets, never guest-pathable (<code>mountinfo</code> included)</li>
+          <li>name = <b>one component</b> (no <code>..</code>/<code>/</code>) · <code>openat2(IN_ROOT)</code> + <code>O_NOFOLLOW</code> · inodes held as descriptors · share-root mutations gated pre-dispatch, exhaustive over opcodes</li>
+          <li>filter <b>always on</b> — empty default, no off mode · every set-fs: table clear + epoch bump → stale handle = <b>ESTALE</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="hrow" style="gap:12px">
+      <div class="mini"><b>vs Docker / Kata:</b> NO_NEW_PRIVS ✓ · mount/unshare/bpf/ptrace ✗ · + a VMM filter — siblings are ENOENT, not forbidden</div>
+      <div class="mini">chroot escape changes nothing — every path above the mount still resolves through the filtered share</div>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">12 / 16</span></div>
+</section>
+
+<!-- ═══════════════ 13 · ISOLATION LAYERS 3-4 ═══════════════ -->
+<section class="slide">
+  <h2><span class="ktag"><span class="no">12</span>Isolation · four layers (2/2):</span> the host — nobody is trusted, not even the VMM</h2>
+  <div class="sub">One serializer drives a strictly ordered swap with secrets the VMM never sees; every daemon lands on an identity with nothing left to take.</div>
+  <div class="content">
+    <div class="cols">
+      <div class="panel" style="border-color:var(--accent)">
+        <h3>Layer 3 · sandlot / sandprov — per node</h3>
+        <ul class="b sm">
+          <li><b>why:</b> one serializer drives a strictly ordered swap — the VMM never sees the secrets</li>
+          <li>sandlot binds <b>one sandfs to one VM</b> · per-VM mount lock — never double-mounted, guarded independently <b>×4</b>: cluster · node · VM · chroot</li>
+          <li>order both ways: <b>filter before mount</b> · stale mount out <b>before</b> filter swap — never stack</li>
+          <li>protocol assumes a hostile peer: <code>mount_point</code> pinned to <code>/mnt/rootfs</code> · volume identity re-asserted at exec · malformed frame closes the connection — never PID 1</li>
+          <li>prov sandlot = the <b>only writer</b> of the volumes tree · egress identity published before mount, revoked at swap-out</li>
+          <li>volume names = <code>sf-</code> + HMAC-SHA256(seed, id) — <b>2<sup>128</sup></b> · seed <code>root:sandprov</code> 0640, never reaches the VMM · rotation re-keys every name</li>
+        </ul>
+      </div>
+      <div class="panel" style="border-color:var(--accent)">
+        <h3>Layer 4 · the host — 5 roles + vsockguard</h3>
+        <ul class="b sm">
+          <li><b>why:</b> every daemon lands on an identity with nothing left to take</li>
+          <li><b>sandlot 985</b> exec · <b>sandserv 986</b> credentials only · <b>sandvmm 987</b> parses guest requests, <b>zero capabilities</b> · <b>sandprov 983</b> storage writer · <b>sandtmpl 982</b> template group</li>
+          <li><b>vsockguard</b> — BPF LSM on <code>connect()</code>: warden port admits <b>only uid 985</b> (AF_VSOCK bypasses device nodes — only an in-kernel hook closes it) · warden answers host CID 2 only · guest kernel: no vsock loopback → ENODEV</li>
+          <li>share root owned by sandprov — daemon's group <b>traverse-only</b>: no listing, no writing beside tenants (kernel EACCES even if the gate regressed) · <code>/dev/vhost-vsock</code> 0600 sandvmm · <code>/dev/vsock</code> 0600 sandlot · volumes <code>nosuid,nodev</code></li>
+          <li>nftables fail-closed: per-TAP anti-spoof · <b>VM↔VM deny</b> · guest→host default-deny — can't install → sandlot refuses to start</li>
+          <li>net effect: a <b>fully compromised VMM</b> reads/writes only the volumes this VM has served — no listing, no name-guessing, no warden, no storage-plane writes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">13 / 16</span></div>
 </section>
 
+
 <!-- ═══════════════ 13 · LATENCY ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">13</span>Latency engineering</div>
-  <h2>Where the milliseconds go</h2>
+  <h2><span class="ktag"><span class="no">13</span>Latency engineering:</span> where the milliseconds go</h2>
   <div class="sub">Client round-trip decomposition, P50 in ms — bare metal, single-node HTTP · cold = cross-agent mount_and_exec · warm = sticky-lease hit.</div>
   <div class="content">
     <div class="cols" style="grid-template-columns:1.2fr 1fr">
@@ -868,8 +799,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 14 · CAPACITY ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">14</span>Measured capacity</div>
-  <h2>183 reuses/s per microVM — 64 agents continuously served by one VM</h2>
+  <h2><span class="ktag"><span class="no">14</span>Measured capacity:</span> 183 reuses/s per microVM — 64 agents continuously served by one VM</h2>
   <div class="sub">Bare-metal KVM · Xeon 8255C (96 threads) · pinned cores/NUMA · 1 vCPU / 256 MiB VMs · capacity defined by latency tiers.</div>
   <div class="content" style="gap:12px">
     <div class="kpis">
@@ -894,8 +824,7 @@ date: 2026-11-07
 
 <!-- ═══════════════ 15 · TAKEAWAYS ═══════════════ -->
 <section class="slide">
-  <div class="kicker"><span class="no">15</span>Takeaways</div>
-  <h2>Sandswap in five lines</h2>
+  <h2><span class="ktag"><span class="no">15</span>Takeaways:</span> Sandswap in five lines</h2>
   <div class="content" style="gap:18px; justify-content:center">
     <ul class="b" style="font-size:20px">
       <li style="margin-bottom:13px"><b>Compute ⟂ disk</b> — microVM = kernel + warden · SandFS directory = the rootfs</li>
