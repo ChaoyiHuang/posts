@@ -833,7 +833,7 @@ date: 2026-11-07
         <h3>Carrier A — binding region · authoritative</h3>
         <div class="lwhy"><b>why it holds:</b> identity lives host-side, keyed by the TAP — the guest cannot touch it</div>
         <table class="laytab">
-          <tr><td>region</td><td>node-local shared memory · keyed by TAP <code>ifindex</code> · no event stream — readers poll</td></tr>
+          <tr><td>region</td><td>node-local shared memory · keyed by TAP <code>ifindex</code> · no event stream — readers poll (on-demand read)</td></tr>
           <tr><td>shm</td><td><code>/dev/shm</code> file 0640 · <code>mmap</code> — any local reader · zero dependencies</td></tr>
           <tr><td>bpf</td><td><code>BPF_F_MMAPABLE</code> array pinned to bpffs — tc / XDP / eBPF read in kernel context</td></tr>
           <tr><td>entry</td><td>state · mount_epoch · agent_id · sandfs_id · vm_id</td></tr>
