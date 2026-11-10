@@ -547,10 +547,12 @@ date: 2026-11-07
         </ul>
       </div>
     </div>
-    <div class="hrow" style="gap:12px">
-      <div class="mini"><b>build in flat</b></div><span style="color:var(--baseline); font-size:18px">→</span>
-      <div class="mini"><b>save-as-template</b> → OCI artifact</div><span style="color:var(--baseline); font-size:18px">→</span>
-      <div class="mini"><b>serve overlay ×N</b> from one immutable base</div>
+    <div class="hrow" style="gap:10px; row-gap:8px; flex-wrap:wrap">
+      <div class="mini"><b>① build</b> flat template — chroot-able rootfs, offline</div><span style="color:var(--baseline); font-size:18px">→</span>
+      <div class="mini"><b>② agent builds</b> — flat SandFS · <code>apt</code> / <code>pip</code></div><span style="color:var(--baseline); font-size:18px">→</span>
+      <div class="mini"><b>③ freeze</b> — save-as-template → read-only base</div><span style="color:var(--baseline); font-size:18px">→</span>
+      <div class="mini"><b>④ publish</b> — OCI artifact (optional, cross-site)</div><span style="color:var(--baseline); font-size:18px">→</span>
+      <div class="mini"><b>⑤ serve</b> — overlay ×N · shared base + private workspace</div>
     </div>
     <ul class="b">
       <li>Persists across swaps, VM recycle, node migration — <code>pip</code> / <code>npm</code> / files all survive</li>
