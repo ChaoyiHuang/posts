@@ -113,6 +113,9 @@ date: 2026-11-07
   .iso .laytab{font-size:15px}
   .iso .laytab td{padding:2.5px 8px 2.5px 0}
   .iso .lwhy{font-size:15.5px; margin:0 0 6px}
+  .own .laytab{font-size:15px}
+  .own .laytab td{padding:2.5px 8px 2.5px 0}
+  .own .lwhy{font-size:15.5px; margin:0 0 6px}
   /* swap-out step flow */
   .steps{display:grid; grid-template-columns:repeat(5,1fr); gap:12px 12px}
   .step{border:1.5px solid var(--hairline); border-top:4px solid var(--accent); border-radius:6px;
@@ -220,7 +223,7 @@ date: 2026-11-07
         <div class="note">ideal benchmark · A→B rotation ≈ 6 ms</div></div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">1 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">1 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 2 · PROBLEM ═══════════════ -->
@@ -244,7 +247,7 @@ date: 2026-11-07
       <li>Amortize via <b>session-level</b> suspend/resume → <b>deeper idling</b> · overcommit → <b>bursty load → CPU / memory contention</b></li>
     </ul>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">2 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">2 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 3 · CORE IDEA ═══════════════ -->
@@ -299,7 +302,7 @@ date: 2026-11-07
     </ul>
   </div>
   <div style="position:absolute; left:56px; right:56px; top:596px; text-align:center; font-size:25px; line-height:1.35; color:var(--ink)"><b style="color:var(--accent-deep)">microVM redefinition:</b> <b>no task, no disk</b>.</div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">3 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">3 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 4 · ARCHITECTURE ═══════════════ -->
@@ -368,7 +371,7 @@ date: 2026-11-07
       </div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">4 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">4 / 18</span></div>
 </section>
 
 
@@ -488,7 +491,7 @@ date: 2026-11-07
       <tr><td>Kubernetes</td><td>✓</td><td>✓</td></tr>
     </table>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">5 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">5 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 6 · DESIGN PRINCIPLES ═══════════════ -->
@@ -511,7 +514,7 @@ date: 2026-11-07
       <div class="mini">weakening any one weakens the rest — all must hold</div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">6 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">6 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 7 · SANDFS ═══════════════ -->
@@ -559,7 +562,7 @@ date: 2026-11-07
       <li>overlay SandFS: <b>detach / attach template</b> — swap the read-only base without losing agent work (<code>workspace/</code> · <code>home/</code> live in the volume)</li>
     </ul>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">7 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">7 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 7 · SWAP-IN ═══════════════ -->
@@ -587,7 +590,7 @@ date: 2026-11-07
       <li>Starved pool → fail fast <code>NO_AVAILABLE_SANDBOX</code> · refill async</li>
     </ul>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">8 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">8 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 8 · SWAP-OUT ═══════════════ -->
@@ -615,7 +618,7 @@ date: 2026-11-07
       <li>Recycle bounds (uses / mounts / agents / memory) = <b>hygiene, not correctness</b></li>
     </ul>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">9 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">9 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 10 · ZERO RESIDUE ═══════════════ -->
@@ -647,7 +650,7 @@ date: 2026-11-07
       </div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">10 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">10 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 11 · GUEST KERNEL HARDENING ═══════════════ -->
@@ -699,7 +702,7 @@ date: 2026-11-07
       </div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">11 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">11 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 12 · ISOLATION LAYERS 1-2 ═══════════════ -->
@@ -736,7 +739,7 @@ date: 2026-11-07
       </div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">12 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">12 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 13 · ISOLATION LAYERS 3-4 ═══════════════ -->
@@ -772,7 +775,7 @@ date: 2026-11-07
       </div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">13 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">13 / 18</span></div>
 </section>
 
 
@@ -816,12 +819,52 @@ date: 2026-11-07
       </div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">14 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">14 / 18</span></div>
+</section>
+
+<!-- ═══════════════ 14 · OWNERSHIP & RESILIENCE ═══════════════ -->
+<section class="slide own">
+  <h2><span class="ktag"><span class="no">14</span>Ownership &amp; resilience:</span> tolerance first, confirmed switching — never double-mounted</h2>
+  <div class="sub">agent → sandns → gateway → node → microVM — pure delivery, zero coordination on the command path.</div>
+  <div class="content">
+    <div class="cols">
+      <div class="panel" style="border-color:var(--accent)">
+        <h3>The normal path — routing on two facts</h3>
+        <div class="lwhy"><b>why it is fast:</b> one owner, one node — nothing is re-decided per command</div>
+        <table class="laytab">
+          <tr><td>sandns</td><td>stateless DNS router · 3 zones · guests get NXDOMAIN</td></tr>
+          <tr><td>ownership</td><td>etcd <b>plain key · no lease</b> · CAS — the never-double-mounted guard</td></tr>
+          <tr><td>placement</td><td>which node — affinity · survives unmount · reconnect · takeover</td></tr>
+          <tr><td>scheduling</td><td>binpack ∥ spread · affinity → filter → score</td></tr>
+          <tr><td>warm path</td><td>sticky lease short-circuits Claim · DNS once per <b>connection</b></td></tr>
+        </table>
+      </div>
+      <div class="panel" style="border-color:var(--accent)">
+        <h3>Failure — tolerance first, confirmed switching</h3>
+        <div class="lwhy"><b>why it is safe:</b> no lease expiry → no race — every release path completes before any switch</div>
+        <table class="laytab">
+          <tr><td>stream = truth</td><td>the gateway on a node's <b>live stream</b> holds its whole mount state — nobody else can mount onto that node</td></tr>
+          <tr><td>connect-clean</td><td>a node connecting to any gateway <b>proves</b> its old mounts released — the confirmation under both paths</td></tr>
+          <tr><td>default</td><td>blip → ownership unmoved · 503 + retry · heals in place</td></tr>
+          <tr><td>anchors</td><td>warden countdown: heartbeats only — release ≤ 10 min &lt; T_safe 11 &lt; T_iso 12</td></tr>
+          <tr><td>owner release</td><td>the <b>living owner</b> confirms → delete keys</td></tr>
+          <tr><td>migrated takeover</td><td>the <b>living sandlot</b> confirms → CAS overwrite</td></tr>
+          <tr><td>both dead</td><td>no living confirmer → safe-stuck · manual reap</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="hrow" style="gap:12px">
+      <div class="mini"><b>etcd partition:</b> fail-closed Claim · self-fence — a partition cannot forge a switch</div>
+      <div class="mini"><b>in-VM:</b> one VM, one SandFS · umount EBUSY → destroy — <code>MNT_DETACH</code> forbidden</div>
+      <div class="mini"><b>agent view:</b> 503 + retry · blips heal in seconds · never double-mounted</div>
+    </div>
+  </div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">15 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 14 · EGRESS ENABLER ═══════════════ -->
 <section class="slide egress">
-  <h2><span class="ktag"><span class="no">14</span>Egress enabler:</span> one identity, two carriers — traffic attribution the guest cannot forge</h2>
+  <h2><span class="ktag"><span class="no">15</span>Egress enabler:</span> one identity, two carriers — traffic attribution the guest cannot forge</h2>
   <div class="sub">Sandswap sets <b>no network policy</b> — it turns "who is this traffic" into a host-side fact; the vendor's enforcer decides allow/deny. Identity = <code>(agent_id, sandfs_id, mount_epoch, vm_id)</code>, resolved at every mount.</div>
   <div class="content">
     <div class="cols">
@@ -856,12 +899,12 @@ date: 2026-11-07
       <div class="mini">production <b>must</b> enable one carrier — <code>require_egress_binding</code></div>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">15 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">16 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 14 · CAPACITY ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">15</span>Measured capacity:</span> 183 reuses/s per microVM</h2>
+  <h2><span class="ktag"><span class="no">16</span>Measured capacity:</span> 183 reuses/s per microVM</h2>
   <div class="sub">Bare-metal KVM · Xeon 8255C — 48 physical cores (96 threads) · pinned cores/NUMA · 1 vCPU / 256 MiB VMs · capacity defined by latency tiers.</div>
   <div class="content" style="gap:12px">
     <div class="kpis">
@@ -882,12 +925,12 @@ date: 2026-11-07
       <li><b>Core budget:</b> of 48 physical cores — <b>loadgen</b> 4 · <b>gateway + etcd</b> 4 · <b>sandlot</b> 4 · 4 spare for boot-failure replacement — <b>32 cores run microVMs</b></li>
     </ul>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">16 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">17 / 18</span></div>
 </section>
 
 <!-- ═══════════════ 15 · TAKEAWAYS ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">16</span>Takeaways:</span> Sandswap in five lines</h2>
+  <h2><span class="ktag"><span class="no">17</span>Takeaways:</span> Sandswap in five lines</h2>
   <div class="content" style="gap:18px; justify-content:center">
     <ul class="b" style="font-size:20px">
       <li style="margin-bottom:13px"><b>microVM = compute · SandFS = disk</b> — kernel + warden in the VM · the agent's whole disk is one host directory</li>
@@ -908,7 +951,7 @@ date: 2026-11-07
       <span>every benchmark reproducible — scripts + raw logs published</span>
     </div>
   </div>
-  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">17 / 17</span></div>
+  <div class="foot"><span>Sandswap · CNCF AI TCG · github.com/ChaoyiHuang/sandswap</span><span class="r">18 / 18</span></div>
 </section>
 
 </div>
@@ -916,7 +959,7 @@ date: 2026-11-07
 <div class="hint">scroll or ← → to navigate · F fullscreen · P print</div>
 <div class="hud">
   <button id="prev" title="Previous (←)">‹</button>
-  <span id="ctr" style="font-variant-numeric:tabular-nums">1 / 17</span>
+  <span id="ctr" style="font-variant-numeric:tabular-nums">1 / 18</span>
   <button id="next" title="Next (→)">›</button>
 </div>
 
