@@ -190,7 +190,8 @@ date: 2026-11-07
   @media print{
     body{display:block; height:auto; overflow:visible; background:#fff}
     #deck{transform:none !important; width:auto; height:auto}
-    .slide{display:flex !important; position:relative; page-break-after:always; break-after:page}
+    .slide{display:flex !important; position:relative; width:1280px; height:720px; page-break-after:always; break-after:page}
+    .slide:last-child{page-break-after:auto; break-after:auto}
     .hud,.hint{display:none}
   }
   @page{size:1280px 720px; margin:0}
@@ -832,8 +833,8 @@ date: 2026-11-07
         <h3>The normal path — routing on two facts</h3>
         <div class="lwhy"><b>why it is fast:</b> one owner, one node — nothing is re-decided per command</div>
         <table class="laytab">
-          <tr><td>sandns</td><td>stateless DNS router · 3 zones · guests get NXDOMAIN</td></tr>
-          <tr><td>ownership</td><td>etcd <b>plain key · no lease</b> · CAS — the never-double-mounted guard</td></tr>
+          <tr><td>sandns</td><td>stateless owner-aware DNS router — decides ownership</td></tr>
+          <tr><td>ownership</td><td>which gateway — etcd <b>plain key · no lease</b> · CAS — the never-double-mounted guard · gateway decides placement</td></tr>
           <tr><td>placement</td><td>which node — affinity · survives unmount · reconnect · takeover</td></tr>
           <tr><td>scheduling</td><td>binpack ∥ spread · affinity → filter → score</td></tr>
           <tr><td>warm path</td><td>sticky lease short-circuits Claim · DNS once per <b>connection</b></td></tr>
