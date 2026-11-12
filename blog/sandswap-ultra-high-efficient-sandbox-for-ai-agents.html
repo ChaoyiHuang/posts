@@ -1,5 +1,5 @@
 ---
-title: "Sandswap — ultra high efficient sandbox for AI agents"
+title: "Sandswap — ultra efficient sandboxes for AI agents"
 nav_order: 2
 parent: Blog
 description: "CNCF AI TCG talk slides — how Sandswap time-shares one strongly-isolated KVM microVM across AI agents at millisecond granularity (183 reuses/s per microVM, ~2.3 ms cold / ~0.96 ms warm), cutting agent execution-environment cost by 50–100×."
@@ -10,7 +10,7 @@ date: 2026-11-07
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sandswap — ultra high efficient sandbox for AI agents</title>
+<title>Sandswap — ultra efficient sandboxes for AI agents</title>
 <style>
   :root{
     --page:#f9f9f7; --surface:#fcfcfb;
@@ -190,7 +190,7 @@ date: 2026-11-07
   @media print{
     body{display:block; height:auto; overflow:visible; background:#fff}
     #deck{transform:none !important; width:auto; height:auto}
-    .slide{display:flex !important; position:relative; width:1280px; height:720px; page-break-after:always; break-after:page}
+    .slide{display:flex !important; position:relative; width:100%; height:100vh; min-height:720px; page-break-after:always; break-after:page}
     .slide:last-child{page-break-after:auto; break-after:auto}
     .hud,.hint{display:none}
   }
@@ -203,7 +203,7 @@ date: 2026-11-07
 <!-- ═══════════════ 1 · TITLE ═══════════════ -->
 <section class="slide title-slide active">
   <div class="kicker">CNCF AI TCG · November 2026 · Chaoyi Huang</div>
-  <h1>Sandswap <span class="thin">— ultra high efficient sandbox for AI agents</span></h1>
+  <h1>Sandswap <span class="thin">— ultra efficient sandboxes for AI agents</span></h1>
   <div class="tbody">
     <div class="keymsg">
       Different AI agents <b>share and reuse the same strongly-isolated microVM at millisecond
