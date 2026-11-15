@@ -6,6 +6,11 @@ lang: en-US
 # Just the Docs theme (works with GitHub Pages branch builds via jekyll-remote-theme)
 remote_theme: just-the-docs/just-the-docs@v0.12.0
 
+# Plugins (both are supported by GitHub Pages)
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
 # Site URL — project pages for the ChaoyiHuang/posts repository
 url: https://chaoyihuang.github.io
 baseurl: /posts
