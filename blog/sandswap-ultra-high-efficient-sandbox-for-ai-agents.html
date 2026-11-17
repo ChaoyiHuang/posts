@@ -2,7 +2,7 @@
 title: "Sandswap — ultra efficient sandboxes for AI agents"
 nav_order: 2
 parent: Blog
-description: "CNCF AI TCG talk slides — how Sandswap time-shares one strongly-isolated KVM microVM across AI agents at millisecond granularity (183 reuses/s per microVM, ~2.3 ms cold / ~0.96 ms warm), cutting agent execution-environment cost by 50–100×."
+description: "CNCF AI TCG talk slides — how Sandswap time-shares one strongly-isolated KVM tinyVM across AI agents at millisecond granularity (183 reuses/s per tinyVM, ~2.3 ms cold / ~0.96 ms warm), cutting agent execution-environment cost by 50–100×."
 date: 2026-11-07
 ---
 <!doctype html>
@@ -15,7 +15,7 @@ date: 2026-11-07
 <link rel="canonical" href="https://chaoyihuang.github.io/posts/blog/sandswap-ultra-high-efficient-sandbox-for-ai-agents.html" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="Sandswap — ultra efficient sandboxes for AI agents" />
-<meta property="og:description" content="CNCF AI TCG talk — how Sandswap time-shares one strongly-isolated KVM microVM across AI agents at millisecond granularity, cutting agent execution-environment cost by 50–100×." />
+<meta property="og:description" content="CNCF AI TCG talk — how Sandswap time-shares one strongly-isolated KVM tinyVM across AI agents at millisecond granularity, cutting agent execution-environment cost by 50–100×." />
 <meta property="og:url" content="https://chaoyihuang.github.io/posts/blog/sandswap-ultra-high-efficient-sandbox-for-ai-agents.html" />
 <meta name="twitter:card" content="summary" />
 <script type="application/ld+json">
@@ -23,7 +23,7 @@ date: 2026-11-07
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "headline": "Sandswap — ultra efficient sandboxes for AI agents",
-  "description": "CNCF AI TCG talk — how Sandswap time-shares one strongly-isolated KVM microVM across AI agents at millisecond granularity (183 reuses/s per microVM, ~2.3 ms cold / ~0.96 ms warm), cutting agent execution-environment cost by 50–100×.",
+  "description": "CNCF AI TCG talk — how Sandswap time-shares one strongly-isolated KVM tinyVM across AI agents at millisecond granularity (183 reuses/s per tinyVM, ~2.3 ms cold / ~0.96 ms warm), cutting agent execution-environment cost by 50–100×.",
   "datePublished": "2026-11-07",
   "author": {"@type": "Person", "name": "Chaoyi Huang", "url": "https://github.com/ChaoyiHuang"},
   "url": "https://chaoyihuang.github.io/posts/blog/sandswap-ultra-high-efficient-sandbox-for-ai-agents.html",
@@ -237,7 +237,7 @@ date: 2026-11-07
   <h1>Sandswap <span class="thin">— ultra efficient sandboxes for AI agents</span></h1>
   <div class="tbody">
     <div class="keymsg">
-      Different AI agents <b>share and reuse the same strongly-isolated microVM at millisecond
+      Different AI agents <b>share and reuse the same strongly-isolated tinyVM at millisecond
       granularity</b> — cutting agent execution-environment cost by <b>50–100×</b>.
     </div>
     <div class="kpis" style="margin-top:26px">
@@ -250,7 +250,7 @@ date: 2026-11-07
       <div class="kpi"><div class="lbl">Async swap-out</div>
         <div class="val">≈3.1<small> ms</small></div>
         <div class="note">off the response path · zero residue</div></div>
-      <div class="kpi"><div class="lbl">Reuses per microVM</div>
+      <div class="kpi"><div class="lbl">Reuses per tinyVM</div>
         <div class="val">183<small> /s</small></div>
         <div class="note">ideal benchmark · A→B rotation ≈ 6 ms</div></div>
     </div>
@@ -285,27 +285,27 @@ date: 2026-11-07
 <!-- ═══════════════ 3 · CORE IDEA ═══════════════ -->
 <section class="slide">
   <h2><span class="ktag"><span class="no">02</span>Core idea:</span> swap the disk, not the machine</h2>
-  <div class="sub">Compute and disk decoupled — the microVM is pure compute; the agent's disk is a directory.</div>
+  <div class="sub">Compute and disk decoupled — the tinyVM is pure compute; the agent's disk is a directory.</div>
   <div class="content">
     <div style="display:grid; grid-template-columns:1fr 150px 1fr 150px 1fr 150px 1fr; align-items:stretch">
-      <!-- row 1 · one microVM over time -->
+      <!-- row 1 · one tinyVM over time -->
       <div class="tlb">
-        <div class="st">microVM · CLEAN</div>
+        <div class="st">tinyVM · CLEAN</div>
         <div class="sd">kernel + warden (PID 1)<br>no mount · no processes</div>
       </div>
       <div class="tla"><div class="al">① swap in A<br>set-fs + guest mount</div><div class="ac">→</div></div>
       <div class="tlb use">
-        <div class="st">microVM · IN USE</div>
+        <div class="st">tinyVM · IN USE</div>
         <div class="sd">A mounted · executing<br>allowed_dirs = [sf-a51f3c]</div>
       </div>
       <div class="tla"><div class="al">② swap out — async ≈3.1 ms<br>unmount + clearing chain</div><div class="ac">→</div></div>
       <div class="tlb">
-        <div class="st">microVM · CLEAN</div>
+        <div class="st">tinyVM · CLEAN</div>
         <div class="sd">kernel + warden (PID 1)<br>no mount · no processes</div>
       </div>
       <div class="tla"><div class="al">③ swap in B<br>set-fs + guest mount</div><div class="ac">→</div></div>
       <div class="tlb use">
-        <div class="st">microVM · IN USE</div>
+        <div class="st">tinyVM · IN USE</div>
         <div class="sd">B mounted · executing<br>allowed_dirs = [sf-b7e2d9]</div>
       </div>
       <!-- connector row -->
@@ -323,17 +323,17 @@ date: 2026-11-07
       <div class="volb act"><div><b>sf-b7e2d9</b><br><span style="font-size:12px; font-weight:500">agent B's SandFS — active</span></div></div>
     </div>
     <div class="hrow" style="gap:12px; margin-top:42px">
-      <div class="mini">top row — one microVM over time (compute)</div>
+      <div class="mini">top row — one tinyVM over time (compute)</div>
       <div class="mini">bottom row — volumes/ (storage)</div>
       <div class="mini">dashed = nothing mounted</div>
-      <div class="mini">microVM = compute · SandFS = disk</div>
+      <div class="mini">tinyVM = compute · SandFS = disk</div>
     </div>
     <ul class="b">
       <li><b>Swap in</b> = filter swap (~0.2 ms) + bind-mount — <b>no boot, no copy, no snapshot</b></li>
       <li><b>SandFS</b> = the agent's persistent filesystem — everything it keeps: files, code, <code>workspace/</code>, <code>home/</code> · storage backend: local disk · NFS · CephFS · Cloud FS, …</li>
     </ul>
   </div>
-  <div style="position:absolute; left:56px; right:56px; top:596px; text-align:center; font-size:25px; line-height:1.35; color:var(--ink)"><b style="color:var(--accent-deep)">microVM redefinition:</b> <b>no task, no disk</b>.</div>
+  <div style="position:absolute; left:56px; right:56px; top:596px; text-align:center; font-size:25px; line-height:1.35; color:var(--ink)"><b style="color:var(--accent-deep)">Sandswap defines the tinyVM:</b> <b>no task, no disk</b>.</div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · <a href="https://github.com/ChaoyiHuang/sandswap" rel="noopener">github.com/ChaoyiHuang/sandswap</a></span><span class="r">3 / 18</span></div>
 </section>
 
@@ -349,7 +349,7 @@ date: 2026-11-07
         </div>
         <div class="planecard">
           <div class="pt">exec plane</div>
-          <div class="pd">gateway → sandlot → sandvmm → microVM (warden) — every agent command</div>
+          <div class="pd">gateway → sandlot → sandvmm → tinyVM (warden) — every agent command</div>
         </div>
         <div class="planecard">
           <div class="pt">storage plane</div>
@@ -388,8 +388,8 @@ date: 2026-11-07
       │ gRPC bidi stream(sandlot dial out)             │
 ┌─────▼─────────────────────────┐       ┌──────────────▼──────────────────┐
 │ node × N — exec sandlot       │       │ instances × M — prov sandlot    │
-│ sandvmm · microVMs (warden)   │       │ sandfs + template lifecycle     │
-│ one SandFS per microVM        │       │ OCI pull/push [EXT]             │
+│ sandvmm · tinyVMs (warden)    │       │ sandfs + template lifecycle     │
+│ one SandFS per tinyVM         │       │ OCI pull/push [EXT]             │
 │ at a time                     │       └──────────────┬──────────────────┘
 └─────┬─────────────────────────┘                      │
       │ virtio-fs passthrough                          │ volume + template writes
@@ -422,7 +422,7 @@ date: 2026-11-07
           <div class="hrow" style="gap:2px">
             <div class="mini" style="flex:1">gateway<br>(single-node)</div>
             <div class="dashline" style="min-width:16px"></div>
-            <div class="mini" style="flex:1">sandlot (exec+prov)<br>sandvmm<br>microVM (warden)</div>
+            <div class="mini" style="flex:1">sandlot (exec+prov)<br>sandvmm<br>tinyVM (warden)</div>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr"><div></div><div class="dashvert"></div></div>
           <div class="volb">SandFS volumes — local disk</div>
@@ -445,7 +445,7 @@ date: 2026-11-07
             <div class="dashvert"></div><div></div><div class="dashvert"></div>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px">
-            <div class="mini">sandlot (exec)<br>sandvmm<br>microVM (warden)</div><div></div><div class="mini">sandlot (prov)</div>
+            <div class="mini">sandlot (exec)<br>sandvmm<br>tinyVM (warden)</div><div></div><div class="mini">sandlot (prov)</div>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr 1fr">
             <div class="dashvert"></div><div></div><div class="dashvert"></div>
@@ -473,7 +473,7 @@ date: 2026-11-07
         <div class="hrow" style="gap:8px; width:100%">
           <div class="hostbox" style="flex:1">
             <div class="hl">exec nodes ×N</div>
-            <div class="mini">sandlot (exec)<br>sandvmm<br>microVM (warden)</div>
+            <div class="mini">sandlot (exec)<br>sandvmm<br>tinyVM (warden)</div>
           </div>
           <div class="hostbox" style="flex:1">
             <div class="hl">prov nodes ×M</div>
@@ -504,7 +504,7 @@ date: 2026-11-07
         <div class="hrow" style="gap:8px; width:100%">
           <div class="hostbox" style="flex:1">
             <div class="hl">exec nodes ×N</div>
-            <div class="mini">sandlot (exec)<br>sandvmm<br>microVM (warden)</div>
+            <div class="mini">sandlot (exec)<br>sandvmm<br>tinyVM (warden)</div>
           </div>
           <div class="hostbox" style="flex:1">
             <div class="hl">prov nodes ×M</div>
@@ -535,7 +535,7 @@ date: 2026-11-07
       <div class="pcard"><div class="pn">P1</div><div class="pt">Everything persists</div><div class="pd">all meaningful AI agent state durable — resume after any failure</div></div>
       <div class="pcard"><div class="pn">P2</div><div class="pt">Minimal E2E latency</div><div class="pd">gateway → sandlot → warden at the transport limit · no hot-path locks</div></div>
       <div class="pcard"><div class="pn">P3</div><div class="pt">Minimal swap cost</div><div class="pd">swap-in on the critical path · swap-out in the background</div></div>
-      <div class="pcard"><div class="pn">P4 — SAFETY CORE</div><div class="pt">Never double-mounted</div><div class="pd">one SandFS on one microVM — at any instant, anywhere</div></div>
+      <div class="pcard"><div class="pn">P4 — SAFETY CORE</div><div class="pt">Never double-mounted</div><div class="pd">one SandFS on one tinyVM — at any instant, anywhere</div></div>
       <div class="pcard"><div class="pn">P5</div><div class="pt">One sandlot, one gateway</div><div class="pd">a single outbound stream at any moment</div></div>
       <div class="pcard"><div class="pn">P6</div><div class="pt">Sandlots stick, fail slow</div><div class="pd">switch gateway only after a bounded timeout</div></div>
       <div class="pcard"><div class="pn">P7</div><div class="pt">Agents stick, fail slow</div><div class="pd">same time-gated failover — never flap</div></div>
@@ -552,7 +552,7 @@ date: 2026-11-07
 <!-- ═══════════════ 7 · SANDFS ═══════════════ -->
 <section class="slide">
   <h2><span class="ktag"><span class="no">06</span>SandFS:</span> the agent's persistent filesystem — two modes</h2>
-  <div class="sub">The microVM is the compute; the SandFS is the disk. Each agent owns one or more SandFS instances — everything it keeps lives here.</div>
+  <div class="sub">The tinyVM is the compute; the SandFS is the disk. Each agent owns one or more SandFS instances — everything it keeps lives here.</div>
   <div class="content">
     <div class="cols">
       <div class="panel">
@@ -600,7 +600,7 @@ date: 2026-11-07
 <!-- ═══════════════ 7 · SWAP-IN ═══════════════ -->
 <section class="slide">
   <h2><span class="ktag"><span class="no">07</span>Swap-in:</span> cold path — filter swap + mount &amp; exec in ONE vsock round trip</h2>
-  <div class="sub">A cold request lands on an idle microVM from the warm pool — the request path contains no boot.</div>
+  <div class="sub">A cold request lands on an idle tinyVM from the warm pool — the request path contains no boot.</div>
   <div class="content" style="gap:10px">
     <pre ascii="">
  agent           gateway                sandlot             sandvmm       warden (PID 1)
@@ -675,7 +675,7 @@ date: 2026-11-07
       <div style="display:flex; flex-direction:column; gap:12px; justify-content:center">
         <ul class="b">
           <li><b>Memory guarantee:</b> no process · no fd · no page · no kernel object names A</li>
-          <li>Central invariant — <b>one SandFS per microVM</b>, enforced <b>×4</b>: cluster · node · <code>MOUNT_GATE</code> · chroot</li>
+          <li>Central invariant — <b>one SandFS per tinyVM</b>, enforced <b>×4</b>: cluster · node · <code>MOUNT_GATE</code> · chroot</li>
           <li>Residues by design: aggregate netns counters · machine-reuse linkability — <b>documented</b></li>
           <li>All pinned by e2e suites — cross-tenant residue · hostile warden · share-root escapes</li>
         </ul>
@@ -857,7 +857,7 @@ date: 2026-11-07
 <!-- ═══════════════ 14 · OWNERSHIP & RESILIENCE ═══════════════ -->
 <section class="slide own">
   <h2><span class="ktag"><span class="no">14</span>Ownership &amp; resilience:</span> tolerance first, confirmed switching — never double-mounted</h2>
-  <div class="sub">agent → sandns → gateway → node → microVM — pure delivery, zero coordination on the command path.</div>
+  <div class="sub">agent → sandns → gateway → node → tinyVM — pure delivery, zero coordination on the command path.</div>
   <div class="content">
     <div class="cols">
       <div class="panel" style="border-color:var(--accent)">
@@ -936,17 +936,17 @@ date: 2026-11-07
 
 <!-- ═══════════════ 14 · CAPACITY ═══════════════ -->
 <section class="slide">
-  <h2><span class="ktag"><span class="no">16</span>Measured capacity:</span> 183 reuses/s per microVM</h2>
+  <h2><span class="ktag"><span class="no">16</span>Measured capacity:</span> 183 reuses/s per tinyVM</h2>
   <div class="sub">Bare-metal KVM · Xeon 8255C — 48 physical cores (96 threads) · pinned cores/NUMA · 1 vCPU / 256 MiB VMs · capacity defined by latency tiers.</div>
   <div class="content" style="gap:12px">
     <div class="kpis">
-      <div class="kpi"><div class="lbl">Ideal reuse rate</div><div class="val">183.95<small> cold/s</small></div><div class="note">per microVM · zero failures · 5 ms knee</div></div>
+      <div class="kpi"><div class="lbl">Ideal reuse rate</div><div class="val">183.95<small> cold/s</small></div><div class="note">per tinyVM · zero failures · 5 ms knee</div></div>
       <div class="kpi"><div class="lbl">Host total — 32 VMs</div><div class="val">5,886<small> cold/s</small></div><div class="note">one whole physical core per VM</div></div>
       <div class="kpi"><div class="lbl">Traffic-shaped</div><div class="val">53.06<small> cold/s</small></div><div class="note">per VM · 2,048 agents queued · 2.0× tier held</div></div>
       <div class="kpi"><div class="lbl">Agent density</div><div class="val">64<small> agents/VM</small></div><div class="note">traffic-shaped · 53.06 cold/s × 1.2 s mean think</div></div>
     </div>
     <table>
-      <tr><th>Scenario — physical-core mapping</th><th class="num">Per microVM</th><th class="num">Per host</th><th>Gate</th></tr>
+      <tr><th>Scenario — physical-core mapping</th><th class="num">Per tinyVM</th><th class="num">Per host</th><th>Gate</th></tr>
       <tr><td>Ideal paced lanes — pure cold</td><td class="num">183.95 cold/s</td><td class="num">5,886 /s</td><td>zero failures at 5 ms knee</td></tr>
       <tr><td>Ideal — mixed, 1–3 requests/turn</td><td class="num">155.96 + 132.25 warm/s</td><td class="num">4,991 + 4,232 /s</td><td>zero failures at 6 ms knee</td></tr>
       <tr><td>Traffic-shaped — pure cold · 2,048 agents</td><td class="num">53.06 cold/s</td><td class="num">1,697.8 /s</td><td>2.0× tier held · 8 ms knee · 64 agents/VM</td></tr>
@@ -954,7 +954,7 @@ date: 2026-11-07
     <ul class="b">
       <li><b>Cost math:</b> 64 agents/VM measured ⇒ ~64× fewer VMs — density <b>scales with think time</b>; ideal ceiling ⇒ <b>~100× and beyond</b></li>
       <li>SMT mapping adds no host capacity — physical-core mapping is the recommendation · raw logs published</li>
-      <li><b>Core budget:</b> of 48 physical cores — <b>loadgen</b> 4 · <b>gateway + etcd</b> 4 · <b>sandlot</b> 4 · 4 spare for boot-failure replacement — <b>32 cores run microVMs</b></li>
+      <li><b>Core budget:</b> of 48 physical cores — <b>loadgen</b> 4 · <b>gateway + etcd</b> 4 · <b>sandlot</b> 4 · 4 spare for boot-failure replacement — <b>32 cores run tinyVMs</b></li>
     </ul>
   </div>
   <div class="foot"><span>Sandswap · CNCF AI TCG · <a href="https://github.com/ChaoyiHuang/sandswap" rel="noopener">github.com/ChaoyiHuang/sandswap</a></span><span class="r">17 / 18</span></div>
@@ -965,13 +965,13 @@ date: 2026-11-07
   <h2><span class="ktag"><span class="no">17</span>Takeaways:</span> Sandswap in five lines</h2>
   <div class="content" style="gap:18px; justify-content:center">
     <ul class="b" style="font-size:20px">
-      <li style="margin-bottom:13px"><b>microVM = compute · SandFS = disk</b> — kernel + warden in the VM · the agent's whole disk is one host directory</li>
+      <li style="margin-bottom:13px"><b>tinyVM = compute · SandFS = disk</b> — kernel + warden in the VM · the agent's whole disk is one host directory</li>
       <li style="margin-bottom:13px"><b>Swap the filesystem, not the machine</b> — 2.3 ms cold · 0.96 ms warm · 3.1 ms async out</li>
       <li style="margin-bottom:13px"><b>Zero residue</b> — proven at every layer, or the VM is destroyed</li>
       <li style="margin-bottom:13px"><b>No isolation traded for speed</b> — hardware VM isolation throughout, plus hardening beyond a plain VM</li>
       <li style="margin-bottom:13px"><b>Think in seconds, swap in milliseconds</b> — 183 reuses/s · 64 agents/VM · <b>50–100× cost cut</b></li>
     </ul>
-    <div style="font-size:25px; line-height:1.35; color:var(--ink); text-align:center"><b style="color:var(--accent-deep)">microVM redefinition:</b> <b>no task, no disk</b>.</div>
+    <div style="font-size:25px; line-height:1.35; color:var(--ink); text-align:center"><b style="color:var(--accent-deep)">Sandswap defines the tinyVM:</b> <b>no task, no disk</b>.</div>
     <div class="hrow" style="gap:12px; flex-wrap:wrap">
       <div class="mini" style="border-color:var(--accent)"><b>hardware isolation at 1/50 – 1/100 the cost</b></div>
       <div class="mini">persistent workspace follows the agent</div>
