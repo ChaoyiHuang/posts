@@ -17,7 +17,7 @@
   "@type": "TechArticle",
   "headline": {{ page.title | jsonify }},
   "description": {{ page.description | jsonify }},
-  "datePublished": {{ page.date | date_to_xmlschema }},
+  "datePublished": {{ page.date | date_to_xmlschema | jsonify }},
   "author": {"@type": "Person", "name": "Chaoyi Huang", "url": "https://github.com/ChaoyiHuang"},
   "url": {{ page.url | absolute_url | jsonify }},
   "about": {
