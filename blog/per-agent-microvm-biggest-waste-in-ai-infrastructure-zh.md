@@ -68,7 +68,7 @@ Sandswap 把 AI Agent 的强隔离工具执行视为一等公民，完全为其�
 一套从零开始、为 AI Agent 打造的计算与磁盘解耦的 tinyVM 架构（[github.com/ChaoyiHuang/sandswap](https://github.com/ChaoyiHuang/sandswap)）：
 
 - ⚡ 纯计算 tinyVM：只有定制加固的 guest kernel + PID 1 warden。零内置 rootfs。
-- ⚡ 动态 SandFS swap：Agent 的 rootfs 目录（SandFS）通过 virtio-fs allow-dirs 按需挂载（冷启动约 2.3ms，热路径约 0.96ms），文件和 pip/apt 安装持久保留。
+- ⚡ 动态 SandFS swap：Agent 的 rootfs 目录（SandFS）通过 virtio-fs allow-dirs 按需挂载（冷路径约 2.3ms，热路径约 0.96ms），文件和 pip/apt 安装持久保留。
 - ⚡ 零历史包袱：没有 boot，没有 image pull，没有 snapshot/suspend/resume/restore。
 - ⚡ 毫秒级回收：空闲超过可配置阈值（最低 1ms）后，SandFS 异步换出、不阻塞响应路径（约 3.1ms），为下一个 Agent 清理状态。
 - ⚡ 四层强隔离：定制加固的 guest kernel、PID 1 warden、专用 sandvmm、主机侧防御，共同实现四层隔离——匹配甚至超过传统 VM。

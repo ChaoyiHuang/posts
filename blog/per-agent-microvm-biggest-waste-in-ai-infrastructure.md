@@ -67,7 +67,7 @@ Sandswap treats the strongly isolated tool execution of AI agents as a first-cla
 A compute-and-disk decoupled tinyVM architecture built from scratch for AI agents ([github.com/ChaoyiHuang/sandswap](https://github.com/ChaoyiHuang/sandswap)):
 
 - ⚡ Pure-compute tinyVM: only a custom-hardened guest kernel plus a PID 1 warden. Zero built-in rootfs.
-- ⚡ Dynamic SandFS swap: the agent's rootfs directory (SandFS) mounts on demand via virtio-fs allow-dirs (about 2.3 ms cold, about 0.96 ms on the warm path); files and pip/apt installs persist.
+- ⚡ Dynamic SandFS swap: the agent's rootfs directory (SandFS) mounts on demand via virtio-fs allow-dirs (~2.3 ms cold, ~0.96 ms warm); files and pip/apt installs persist.
 - ⚡ Zero legacy baggage: no boot, no image pull, no snapshot/suspend/resume/restore.
 - ⚡ Millisecond reclamation: once idle exceeds a configurable threshold (as low as 1 ms), SandFS swaps out asynchronously without blocking the response path (about 3.1 ms), cleaning state for the next agent.
 - ⚡ Four layers of strong isolation: a custom-hardened guest kernel, the PID 1 warden, the dedicated sandvmm, and host-side defenses together form four isolation layers, matching or exceeding a traditional VM.
